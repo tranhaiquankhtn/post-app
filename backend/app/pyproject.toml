@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "app-blog"
+version = "0.1.0"
+description = ""
+authors = ["thaiquan <tranhaiquan.khtn@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "3.11.1"
+fastapi = "^0.88.0"
+uvicorn = "^0.20.0"
+alembic = "^1.9.1"
+psycopg2-binary = "^2.9.5"
+passlib = { extras = ["bcrypt"], version = "^1.7.4" }
+python-jose = "^3.3.0"
+sqlalchemy = "^1.4.46"
+pydantic = {extras = ["dotenv"], version = "^1.10.4"}
+environs = "^9.5.0"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.group.dev.dependencies]
+python-lsp-black = "^1.2.1"
+isort = "^5.11.4"
+autoflake = "^2.0.0"
+mypy = "^0.991"
+pydantic = { extras = ["mypy"], version = "^1.10.4" }
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+line_length = 88
