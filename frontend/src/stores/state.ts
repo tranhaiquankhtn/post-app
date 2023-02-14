@@ -22,12 +22,4 @@ export const appState = defineStore('appState', {
       return state.userProfile && state.userProfile.isActive && state.userProfile.isSuperUser
     },
   },
-  actions: {
-    setToken(newToken: string) {
-      this.token = newToken
-    },
-    setIsLoggedIn(isLoggedIn: boolean) {
-      this.isLoggedIn = isLoggedIn
-    },
-  },
 })

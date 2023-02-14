@@ -6,21 +6,21 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "main" */ '@/views/AppRouter.vue'),
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue'),
+  },
+  {
     path: '/main',
     name: 'Main',
     component: () => import('@/views/Main.vue'),
     children: [
       {
-        path: '/login',
-        name: 'Login',
-        component: () => import('@/views/Login.vue'),
-      },
-      {
         path: '/home',
         name: 'Home',
         component: () => import(/* webpackChunkName: "home" */ '@/views/HomeView.vue'),
       },
-    ]
+    ],
   },
   {
     path: '/:pathMatch(.*)*',

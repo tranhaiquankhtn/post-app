@@ -1,8 +1,11 @@
 <template>
   <div>
-    <v-navigation-drawer persistent fixed app :mini-variant="miniDrawer">
+    <!-- Drawer -->
+    <v-navigation-drawer persistent fixed app :mini-variant="miniDrawer" v-model="showDrawer">
       <v-list dense nav>
-        <v-list-item prepend-avatar="mdi-account" :title="title" />
+        <v-list-item prepend-avatar="https://thaiquan.dev/img/avatar.jpg#avatar">
+          <v-list-item-title v-text="title.toUpperCase()" />
+        </v-list-item>
       </v-list>
       <v-divider />
       <v-list dense nav v-for="(menu, idx) in appMenus" :key="idx" primary>
@@ -18,10 +21,32 @@
         <v-divider />
       </v-list>
     </v-navigation-drawer>
+
+    <!-- App-bar -->
+    <v-app-bar color="primary" app>
+      <v-app-bar-nav-icon @click.stop="showDrawer = !showDrawer" />
+      <v-spacer />
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn icon="mdi-account-circle" v-bind="props"></v-btn>
+        </template>
+        <v-list>
+          <v-list-item to="/main/profile" prepend-icon="mdi-account">
+            <v-list-subheader> Profile </v-list-subheader>
+          </v-list-item>
+          <v-list-item @click="logout" prepend-icon="mdi-logout">
+            <v-list-subheader> Logout </v-list-subheader>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-app-bar>
+
+    <!-- Routing -->
     <v-main>
       <router-view />
     </v-main>
 
+    <!-- Footer -->
     <v-footer class="pa-3" color="primary" app fixed>
       <v-spacer></v-spacer>
       <span class="white--text">&copy; {{ title }}</span>
@@ -31,6 +56,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { mapState, mapWritableState } from 'pinia'
 import { menus } from '@/menus'
 import { appName } from '@/env'
 import { appState } from '@/stores/state'
@@ -47,15 +73,17 @@ export default defineComponent({
       store,
     }
   },
-  methods: {
-    hasAdminAccess() {
-      return store.readAdminAccess
-    },
-    showDrawer() {
-      return store.readShowDraer
-    },
-    miniDrawer() {
-      return store.readMiniDrawer
+  computed: {
+    ...mapState(appState, {
+      miniDrawer: 'miniDrawer',
+    }),
+    ...mapWritableState(appState, {
+      showDrawer: 'showDrawer',
+    }),
+    getters: {
+      hasAdminAccess() {
+        return store.readAdminAccess
+      },
     },
   },
 })
