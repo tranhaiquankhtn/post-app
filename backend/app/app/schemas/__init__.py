@@ -1,2 +1,3 @@
-from .post import Post, PostBase, PostCreate, PostUpdate, PostInDb
-from .user import User, UserCreate, UserUpdate, UserInDb
+from .post import Post, PostBase, PostCreate, PostInDb, PostUpdate
+from .token import Token, TokenData
+from .user import User, UserCreate, UserInDb, UserUpdate

@@ -1,20 +1,24 @@
 from typing import Optional
+from datetime import datetime
+
 from pydantic import BaseModel
-from sys import intern
 
 
 class PostBase(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
+    created: Optional[datetime] = None
+    modified: Optional[datetime] = None
 
 
 class PostCreate(PostBase):
     title: str
     content: str
+    created: datetime
 
 
 class PostUpdate(PostBase):
-    pass
+    modified: datetime
 
 
 class PostInDbBase(PostBase):

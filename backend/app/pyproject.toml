@@ -13,8 +13,9 @@ psycopg2-binary = "^2.9.5"
 passlib = { extras = ["bcrypt"], version = "^1.7.4" }
 python-jose = "^3.3.0"
 sqlalchemy = "^1.4.46"
-pydantic = {extras = ["dotenv"], version = "^1.10.4"}
+pydantic = {extras = ["email"], version = "^1.10.4"}
 environs = "^9.5.0"
+python-multipart = "^0.0.5"
 
 [tool.poetry.dev-dependencies]
 
@@ -33,4 +34,4 @@ build-backend = "poetry.core.masonry.api"
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 0
-line_length = 88
+line_length = 100

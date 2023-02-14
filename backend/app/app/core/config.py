@@ -1,7 +1,8 @@
 from typing import Any, Dict, List
 
 from environs import Env
-from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
+from pydantic import AnyHttpUrl, BaseSettings, EmailStr, PostgresDsn, validator
+from pydantic import parse_obj_as
 
 env = Env()
 
@@ -15,8 +16,8 @@ class Settings(BaseSettings):
     API_V1: str = "/api/v1"
     LOG_FILE = env.str("LOG_FILE", "logs/app.log")
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://localhost",
-        "http://localhost:8080",
+        parse_obj_as(AnyHttpUrl, "http://localhost"),
+        parse_obj_as(AnyHttpUrl, "http://localhost:8080"),
     ]
 
     POSTGRES_SERVER: str
@@ -24,21 +25,29 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
-    SQLALCHEMY_DATABSE_URL: PostgresDsn | None = None
+    SQLALCHEMY_DATABASE_URL: PostgresDsn | None = None
 
-    @validator("SQLALCHEMY_DATABSE_URL", pre=True)
+    @validator("SQLALCHEMY_DATABASE_URL", pre=True, check_fields=False)
     def get_alchemy_url(cls, v: str | None, values: Dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
 
         return PostgresDsn.build(
-            scheme="postgresql",
-            host=values.get("POSTGRES_SERVER"),
-            port=values.get("POSTGRES_PORT"),
+            scheme="postgresql+psycopg2",
+            host=values.get("POSTGRES_SERVER", "localhost"),
+            port=values.get("POSTGRES_PORT", 5928),
             user=values.get("POSTGRES_USER"),
             password=values.get("POSTGRES_PASSWORD"),
-            path=f"/{values.get('POSTGRES_DB') or ''} ",
+            path=f"/{values.get('POSTGRES_DB', '')}",
         )
+
+    FIRST_SUPERUSER: EmailStr = "tranhaiquan.khtn@gmail.com"
+    FIRST_SUPERUSER_PASSWORD: str = "admin01"
+    USERS_OPEN_REGISTRATION: bool = False
+
+    SECRET_KEY: str
+    HASH_ALG: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
 
     class Config:
         case_sensitive = True

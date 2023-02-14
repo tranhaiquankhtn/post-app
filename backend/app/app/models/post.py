@@ -1,7 +1,10 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
-from sqlalchemy import Column, Integer, ForeignKey, String, DateTime
+
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
 from app.db.base_class import Base
-import datetime
 
 if TYPE_CHECKING:
     from .user import User  # noqa: F401
@@ -15,4 +18,4 @@ class Post(Base):
     modified = Column(DateTime, default=datetime.utcnow())
 
     owner_id = Column(Integer, ForeignKey("user.id"))
-    owner = Column("User", back_populates="posts")
+    owner = relationship("User", back_populates="posts")

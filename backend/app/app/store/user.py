@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional, Union
 
 from sqlalchemy.orm import Session
 
-from app.core.security import get_password_hash
+from app.core.security import get_password_hash, verify_password
 from app.models import User
 from app.schemas import UserCreate, UserUpdate
 from app.store.base import StoreBase
@@ -32,13 +32,22 @@ class UserStore(StoreBase[User, UserCreate, UserUpdate]):
         obj_in: Union[UserUpdate, Dict[str, Any]],
     ) -> User:
         update_data = (
-            obj_in if isinstance(obj_in, dict) else obj_in.dict(
-                exclude_unset=True)
+            obj_in if isinstance(obj_in, dict) else obj_in.dict(exclude_unset=True)
         )
 
         if update_data.get("password"):
-            update_data["hashed_password"] = get_password_hash(
-                update_data["password"])
+            update_data["hashed_password"] = get_password_hash(update_data["password"])
             del update_data["password"]
 
         return super().update(db, db_obj=user_in_db, obj_in=update_data)
+
+    def authenticate(self, db: Session, *, email: str, password: str) -> Optional[User]:
+        user = self.get_by_email(db, email=email)
+        if not user:
+            return None
+        if not verify_password(password, user.hashed_password):
+            return None
+        return user
+
+
+user_store = UserStore(User)

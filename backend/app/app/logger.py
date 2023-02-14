@@ -3,8 +3,7 @@ from logging import LogRecord, handlers
 
 
 class NoColoredRotatingFileHandler(handlers.TimedRotatingFileHandler):
-
-    def format(self, record: LogRecord):
+    def format(self, record: LogRecord) -> str:
         log_str = super().format(record)
         log_str = re.sub(r"(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]", "", log_str)
         return log_str
@@ -53,18 +52,18 @@ def config_logging(outfile_path: str) -> dict:
             },
         },
         "loggers": {
-            "": {
+            "root": {
                 "handlers": ["default", "info_file_handler", "error_file_handler"],
                 "level": "INFO",
                 "propagate": False,
             },
             "uvicorn.error": {
-                "level": "INFO",
-                "handlers": ["access", "error_file_handler"],
-                "propagate": False,
+                "level": "ERROR",
+                "handlers": ["access", "info_file_handler"],
+                "propagate": True,
             },
             "uvicorn.access": {
-                "handlers": ["access", "info_file_handler"],
+                "handlers": ["access", "error_file_handler"],
                 "level": "INFO",
                 "propagate": False,
             },
