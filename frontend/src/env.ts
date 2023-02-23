@@ -1,13 +1,13 @@
-const env = import.meta.env.VUE_APP_ENV
+const env = import.meta.env.MODE
 
 let appApiUrl = ''
 
 if (env === 'production') {
-  appApiUrl = `https://${import.meta.env.VUE_APP_DOMAIN_PROD}`
+  appApiUrl = `https://${import.meta.env.VITE_APP_DOMAIN_PROD}`
 } else if (env === 'staging') {
-  appApiUrl = `https://${import.meta.env.VUE_APP_DOMAIN_STAG}`
+  appApiUrl = `https://${import.meta.env.VITE_APP_DOMAIN_STAG}`
 } else {
-  appApiUrl = `https://${import.meta.env.VUE_APP_DOMAIN_DEV}`
+  appApiUrl = `http://${import.meta.env.VITE_APP_DOMAIN_DEV}`
 }
 
 export const apiUrl = appApiUrl

@@ -15,7 +15,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { appState } from '@/stores/state.ts'
+import { appState } from '@/stores'
 export default defineComponent({
   name: 'App',
   setup() {

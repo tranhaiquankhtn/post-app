@@ -1,8 +1,7 @@
 from typing import Any, Dict, List
 
 from environs import Env
-from pydantic import AnyHttpUrl, BaseSettings, EmailStr, PostgresDsn, validator
-from pydantic import parse_obj_as
+from pydantic import BaseSettings, EmailStr, PostgresDsn, validator
 
 env = Env()
 
@@ -15,9 +14,12 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Blog App"
     API_V1: str = "/api/v1"
     LOG_FILE = env.str("LOG_FILE", "logs/app.log")
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        parse_obj_as(AnyHttpUrl, "http://localhost"),
-        parse_obj_as(AnyHttpUrl, "http://localhost:8080"),
+    BACKEND_CORS_ORIGINS: List[str] = [
+        "http://localhost",
+        "http://localhost:8080",
+        "http://localhost:5173",
+        # parse_obj_as(AnyHttpUrl, "http://localhost"),,
+        # parse_obj_as(AnyHttpUrl, "http://localhost:8080"),
     ]
 
     POSTGRES_SERVER: str

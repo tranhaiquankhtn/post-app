@@ -59,7 +59,7 @@ import { defineComponent } from 'vue'
 import { mapState, mapWritableState } from 'pinia'
 import { menus } from '@/menus'
 import { appName } from '@/env'
-import { appState } from '@/stores/state'
+import { appState } from '@/stores'
 
 export default defineComponent({
   name: 'Main',
@@ -80,11 +80,21 @@ export default defineComponent({
     ...mapWritableState(appState, {
       showDrawer: 'showDrawer',
     }),
-    getters: {
-      hasAdminAccess() {
-        return store.readAdminAccess
-      },
+  },
+  methods: {
+    hasAdminAccess() {
+      return store.hasAdminAccess
     },
+  },
+  beforeRouteEnter(to: any, from: any, next: any) {
+    if (to.path === '/main') {
+      next('/main/dashboard')
+    } else {
+      next()
+    }
+  },
+  mounted() {
+    console.log('Main mounted')
   },
 })
 </script>

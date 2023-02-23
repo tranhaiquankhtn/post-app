@@ -34,9 +34,10 @@
                   Incorrect email or Password
                 </v-alert>
               </div>
-              <v-flex class="caption text-sm-right">
+              <v-spacer></v-spacer>
+              <div class="caption text-sm-right">
                 <router-link to="/recover-password"> Forgot your Password? </router-link>
-              </v-flex>
+              </div>
             </v-card-text>
 
             <v-card-actions>
@@ -53,22 +54,25 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapState } from 'pinia'
-import { appState } from '@/stores/state'
+import { appState } from '@/stores'
 import { appName } from '@/env'
+const title = appName
 export default defineComponent({
-  name: 'Login',
-  setup() {
-    const title = appName
+  data() {
+    const store = appState()
     return {
       title,
+      store,
+      email: '',
+      password: '',
     }
   },
   computed: {
     ...mapState(appState, ['loggedInError']),
   },
   methods: {
-    submit() {
-      console.log('submit')
+    async submit() {
+      await this.store.login(this.store, {username: this.email, password: this.password})
     },
   },
 })

@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 from typing import Any
 
@@ -10,6 +11,7 @@ from app.api import deps
 from app.core import security
 from app.core.config import settings
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -17,7 +19,7 @@ router = APIRouter()
 def login(
     db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
-    user = store.user.authenticate(
+    user = store.user_store.authenticate(
         db, email=form_data.username, password=form_data.password
     )
 

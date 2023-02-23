@@ -16,7 +16,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Main.vue'),
     children: [
       {
-        path: '/home',
+        path: '/main/dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/Dashboard.vue'),
+      },
+      {
+        path: '/main/home',
         name: 'Home',
         component: () => import(/* webpackChunkName: "home" */ '@/views/HomeView.vue'),
       },
