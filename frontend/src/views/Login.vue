@@ -53,26 +53,24 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapState } from 'pinia'
-import { appState } from '@/stores'
+import { dispatchLogIn } from '@/store/main/actions';
+import { readLoggedInError } from '@/store/main/getters';
 import { appName } from '@/env'
 const title = appName
 export default defineComponent({
   data() {
-    const store = appState()
     return {
       title,
-      store,
       email: '',
       password: '',
     }
   },
   computed: {
-    ...mapState(appState, ['loggedInError']),
+    loggedInError: () => readLoggedInError(this.$store)
   },
   methods: {
     async submit() {
-      await this.store.login(this.store, {username: this.email, password: this.password})
+        await dispatchLogIn(this.$store, { username: this.email, password: this.password })
     },
   },
 })

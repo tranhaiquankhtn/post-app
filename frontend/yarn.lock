@@ -1203,7 +1203,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/devtools-api@npm:^6.4.5":
+"@vue/devtools-api@npm:^6.0.0-beta.11, @vue/devtools-api@npm:^6.4.5":
   version: 6.5.0
   resolution: "@vue/devtools-api@npm:6.5.0"
   checksum: ec819ef3a426e91d09e9cfefd2827e9ed8ec9d62bb3b3e0674f3da8c7e92a4b879c3b777dc7329172ca6fe2670b62dd5580d23160339208f0f5ae038f2e504ad
@@ -3389,12 +3389,12 @@ __metadata:
     eslint-plugin-vue: ^9.3.0
     jsdom: ^20.0.3
     npm-run-all: ^4.1.5
-    pinia: ^2.0.28
     prettier: ^2.7.1
     sass: ^1.58.0
     sass-loader: ^13.2.0
     start-server-and-test: ^1.15.2
     ts-loader: ^9.4.2
+    typesafe-vuex: ^3.2.2
     typescript: ^4.9.5
     vite: ^4.0.0
     vitest: ^0.25.6
@@ -3403,6 +3403,7 @@ __metadata:
     vue-template-compiler: ^2.7.14
     vue-tsc: ^1.0.12
     vuetify: ^3.1.4
+    vuex: ^4.1.0
     webpack: ^5.75.0
     webpack-cli: ^5.0.1
   languageName: unknown
@@ -5310,25 +5311,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia@npm:^2.0.28":
-  version: 2.0.30
-  resolution: "pinia@npm:2.0.30"
-  dependencies:
-    "@vue/devtools-api": ^6.4.5
-    vue-demi: "*"
-  peerDependencies:
-    "@vue/composition-api": ^1.4.0
-    typescript: ">=4.4.4"
-    vue: ^2.6.14 || ^3.2.0
-  peerDependenciesMeta:
-    "@vue/composition-api":
-      optional: true
-    typescript:
-      optional: true
-  checksum: 2522d3700e2d23f184ae65c36d764973ae4680e2fefbc7ca808524c706f5988ced1633606bfedae8c2a44042026528bac105a9437764d026d6323ddc40610e89
-  languageName: node
-  linkType: hard
-
 "pkg-dir@npm:^4.2.0":
   version: 4.2.0
   resolution: "pkg-dir@npm:4.2.0"
@@ -6550,6 +6532,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typesafe-vuex@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "typesafe-vuex@npm:3.2.2"
+  peerDependencies:
+    vuex: 3.x
+  checksum: 748e19542c9d7d8d622d17f2aafc32edf012aaf2bf56c9524c42d9240691c3ec0dd0fa147a3d12797713800904a441d139dc939fd532ad28420dae586bc59a82
+  languageName: node
+  linkType: hard
+
 "typescript@npm:^4.9.5":
   version: 4.9.5
   resolution: "typescript@npm:4.9.5"
@@ -6770,22 +6761,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-demi@npm:*":
-  version: 0.13.11
-  resolution: "vue-demi@npm:0.13.11"
-  peerDependencies:
-    "@vue/composition-api": ^1.0.0-rc.1
-    vue: ^3.0.0-0 || ^2.6.0
-  peerDependenciesMeta:
-    "@vue/composition-api":
-      optional: true
-  bin:
-    vue-demi-fix: bin/vue-demi-fix.js
-    vue-demi-switch: bin/vue-demi-switch.js
-  checksum: 0fbe9bf8ab7fe498ffa2bbd0cfc8f6f43a6bbaa5eda3e20ef1b70dca7c8b0ddb216a7ff2f632b694fe0735805638975abb441c621ec0bd2e6d4656353f316c15
-  languageName: node
-  linkType: hard
-
 "vue-eslint-parser@npm:^9.0.0, vue-eslint-parser@npm:^9.0.1":
   version: 9.1.0
   resolution: "vue-eslint-parser@npm:9.1.0"
@@ -6867,6 +6842,17 @@ __metadata:
     webpack-plugin-vuetify:
       optional: true
   checksum: 2ff93e0467204006b6466a5d43a9017810b2c69ff0bb597886d1a5445722e5339ab9d6247ee1202478ac4b92b4110428171e3aa5d737ecc50ec82053305f2421
+  languageName: node
+  linkType: hard
+
+"vuex@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "vuex@npm:4.1.0"
+  dependencies:
+    "@vue/devtools-api": ^6.0.0-beta.11
+  peerDependencies:
+    vue: ^3.2.0
+  checksum: f5e375a9c19ea3bbf4b9bc4c2adc033c37d2583e59b2d79da42bde2ab0771a086c419d62323fb354b6d421a8ddb4fd4e14f3abe5d49e9862311bc4847732b608
   languageName: node
   linkType: hard
 

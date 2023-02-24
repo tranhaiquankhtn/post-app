@@ -6,18 +6,21 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { appState } from '@/stores'
+
+import { store } from '@/store'
+import { readLoggedIn } from '@/store/main/getters'
+import { dispatchCheckLoggedIn } from '@/store/main/actions'
 
 const guardRoute = async (to, from, next) => {
-  const store = appState()
-  console.log('isLoggedIn=', store.isLoggedIn)
-  if (store.readLoggedIn) {
+  await dispatchCheckLoggedIn(store)
+  const isLoggedIn = readLoggedIn(store)
+  if (isLoggedIn) {
     if (to.path === '/login' || to.path === '/') {
       next('/main')
     } else {
       next()
     }
-  } else if (store.readLoggedIn === false) {
+  } else if (isLoggedIn === false) {
     if (to.path === '/' || (to.path as string).startsWith('/main')) {
       next('/login')
     } else {
