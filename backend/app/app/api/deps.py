@@ -27,14 +27,14 @@ def get_db() -> Generator[Session, None, None]:
 
 def authorize(db: Session, token: str) -> models.User:
     if not token:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.HASH_ALG])
         token_data = schemas.TokenData(**payload)
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
         )
     user = store.user_store.get(db, id=token_data.sub)

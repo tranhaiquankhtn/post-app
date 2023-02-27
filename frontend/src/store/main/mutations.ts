@@ -1,7 +1,6 @@
 import { getStoreAccessors } from 'typesafe-vuex'
 import { State } from '../state'
 import { AppNotification, AppState } from './state'
-import { IUserProfile } from '@/types/profile'
 
 export const mutations = {
   setToken(state: AppState, token: string) {
@@ -13,11 +12,27 @@ export const mutations = {
   setLogInError(state: AppState, loggedInError: boolean) {
     state.loggedInError = loggedInError
   },
-  setUserProfile(state: AppState, profile: IUserProfile) {
-    state.userProfile = profile
+  setUserProfile(state: AppState, profile: any) {
+    console.log('set_user_profile: ', profile)
+    state.userProfile = {
+      id: profile?.id,
+      email: profile?.email,
+      fullName: profile?.full_name,
+      isActive: profile?.is_active,
+      isSuperUser: profile?.is_superuser,
+    }
   },
   addNotification(state: AppState, notification: AppNotification) {
     state.notifications.push(notification)
+  },
+  removeNotification(state: AppState, notification: AppNotification) {
+    state.notifications = state.notifications.filter((e) => e !== notification)
+  },
+  setShowDrawer(state: AppState, showDrawer: boolean) {
+    state.showDrawer = showDrawer
+  },
+  setMiniDrawer(state: AppState, miniDrawer: boolean) {
+    state.miniDrawer = miniDrawer
   },
 }
 
@@ -27,3 +42,6 @@ export const commitSetLogIn = commit(mutations.setLogIn)
 export const commitSetLogInError = commit(mutations.setLogInError)
 export const commitSetUserProfile = commit(mutations.setUserProfile)
 export const commitAddNotification = commit(mutations.addNotification)
+export const commitRemoveNotification = commit(mutations.removeNotification)
+export const commitsetShowDrawer = commit(mutations.setShowDrawer)
+export const commitSetMiniDrawer = commit(mutations.setMiniDrawer)

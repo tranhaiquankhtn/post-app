@@ -6,14 +6,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
 import { store } from '@/store'
-import { readLoggedIn } from '@/store/main/getters'
+import { readIsLoggedIn } from '@/store/main/getters'
 import { dispatchCheckLoggedIn } from '@/store/main/actions'
 
 const guardRoute = async (to, from, next) => {
   await dispatchCheckLoggedIn(store)
-  const isLoggedIn = readLoggedIn(store)
+  const isLoggedIn = readIsLoggedIn(store)
   if (isLoggedIn) {
     if (to.path === '/login' || to.path === '/') {
       next('/main')
@@ -32,7 +31,7 @@ export default defineComponent({
   beforeRouteEnter(to, from, next) {
     guardRoute(to, from, next)
   },
-  beforeRouteUpdate(store, to, from, next) {
+  beforeRouteUpdate(to, from, next) {
     guardRoute(to, from, next)
   },
 })

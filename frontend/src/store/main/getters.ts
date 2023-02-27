@@ -9,8 +9,10 @@ export const getters = {
   isLoggedIn: (state: AppState) => state.isLoggedIn,
   showDrawer: (state: AppState) => state.showDrawer,
   miniDrawer: (state: AppState) => state.miniDrawer,
-  hasAdminAccess: (state: AppState) =>
-    state.userProfile && state.userProfile.isActive && state.userProfile.isSuperUser,
+  hasAdminAccess: (state: AppState) => {
+    console.log('userProfile: ', state.userProfile)
+    return state.userProfile && state.userProfile.isActive && state.userProfile.isSuperUser
+  }
 }
 
 const { read } = getStoreAccessors<AppState, State>('')

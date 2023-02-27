@@ -12,6 +12,7 @@ import { getStoreAccessors } from 'typesafe-vuex'
 
 import { authApi } from '@/apis/auth'
 import { userApi } from '@/apis/user'
+import { IUserProfile } from '@/types/profile'
 
 import { getLocalToken, removeLocalToken, saveLocalToken } from '@/utils'
 import router from '@/router'
@@ -22,22 +23,23 @@ export const actions = {
   async actionLogIn(context: AppContext, payload: { username: string; password: string }) {
     try {
       const res = await authApi.login(payload.username, payload.password)
-      const token = res?.data?.access_token
+      const token = res.data.access_token
       if (!token) {
         await dispatchLogOut(context)
         return
       }
       saveLocalToken(token)
-      commitSetToken(token)
+      commitSetToken(context, token)
       commitSetLogIn(context, true)
       commitSetLogInError(context, false)
 
       await dispatchGetUserProfile(context, token)
-      await dispatchRouteLogIn()
+      await dispatchRouteLogIn(context)
       commitAddNotification(context, {
         msg: `Welcome ${payload.username}`,
         color: 'success',
       })
+      console.log('log-in done')
     } catch (e) {
       console.error(e)
       await dispatchLogOut(context)
@@ -60,7 +62,7 @@ export const actions = {
   async actionGetUserProfile(context: AppState, token: string) {
     try {
       const res = await userApi.getProfile(token)
-      const profile = res?.data
+      const profile = res.data
       if (profile) {
         commitSetUserProfile(context, profile)
       }
@@ -68,44 +70,49 @@ export const actions = {
       await dispatchHandleApiError(context, e)
     }
   },
-  async actionRouteLogIn() {
+  async actionRouteLogIn(_: AppContext) {
     if (router.currentRoute.value.path === '/login' || router.currentRoute.value.path === '') {
+      console.log('actionRouteLogIn(): go to main')
       router.push('/main')
     }
   },
-  async actionRouteLogOut() {
+  async actionRouteLogOut(_: AppContext) {
     if (router.currentRoute.value.path !== '/login') {
       router.push('/')
     }
   },
   async actionHandleApiError(context: AppContext, error: AxiosError) {
-    if (error.response!.status === 401) {
+    console.error(error)
+    if (error.response?.status === 401) {
       await dispatchLogOut(context)
     }
   },
   async actionCheckLoggedIn(context: AppContext) {
     let token = ''
-    if (!context.state.isLogged) {
-      let token = context.state.token
+    if (!context.state.isLoggedIn) {
+      token = context.state.token
       if (!token) {
         const tokenLocal = getLocalToken()
+        console.log('tokenLocal=', tokenLocal)
         if (tokenLocal) {
           commitSetToken(context, tokenLocal)
           token = tokenLocal
+          console.log('loaded token=', token)
         }
       }
-    }
 
-    if (token) {
-      await dispatchRemoveLogIn(context)
-      return
-    }
-    try {
-      const res = await userApi.getProfile(token)
-      commitSetLogIn(context, true)
-      commitSetUserProfile(context, res.data)
-    } catch (e) {
-      await dispatchRemoveLogIn(context)
+      if (!token) {
+        console.log('token not found. Remove logIn info')
+        await dispatchRemoveLogIn(context)
+        return
+      }
+      try {
+        const res = await userApi.getProfile(token)
+        commitSetLogIn(context, true)
+        commitSetUserProfile(context, res.data)
+      } catch (e) {
+        await dispatchRemoveLogIn(context)
+      }
     }
   },
 }

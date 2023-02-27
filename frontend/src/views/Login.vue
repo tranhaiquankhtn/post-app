@@ -1,10 +1,9 @@
 <template>
-  <div>
     <v-main>
-      <v-container fill-height>
-        <div>
+      <v-container >
+        <v-layout full-height overlaps>
           <v-card class="elevation-12">
-            <v-toolbar color="primary" dark flat>
+            <v-toolbar color="info" dark flat>
               <v-toolbar-title>{{ title }}</v-toolbar-title>
             </v-toolbar>
             <v-card-text>
@@ -45,28 +44,28 @@
               <v-btn @click.prevent="submit" color="info" variant="flat">Login</v-btn>
             </v-card-actions>
           </v-card>
-        </div>
+        </v-layout>
       </v-container>
-    </v-main>
-  </div>
+  </v-main>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { dispatchLogIn } from '@/store/main/actions';
 import { readLoggedInError } from '@/store/main/getters';
+import { store } from '@/store'
 import { appName } from '@/env'
 const title = appName
 export default defineComponent({
-  data() {
+  setup() {
     return {
       title,
-      email: '',
-      password: '',
+      email: ref(''),
+      password: ref(''),
     }
   },
   computed: {
-    loggedInError: () => readLoggedInError(this.$store)
+    loggedInError: () => readLoggedInError(store)
   },
   methods: {
     async submit() {

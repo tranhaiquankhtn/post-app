@@ -3,10 +3,10 @@
     <v-app>
       <v-main v-if="isLoggedIn === null">
         <v-layout align-center justify-center>
-            <div class="text-xs-center">
-              <div class="headline">Loading ...</div>
-              <v-progress-circular size="100" indetermine color="primary" />
-            </div>
+          <div class="text-xs-center">
+            <div class="headline">Loading ...</div>
+            <v-progress-circular size="100" indetermine color="primary" />
+          </div>
         </v-layout>
       </v-main>
       <router-view v-else />
@@ -15,14 +15,18 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { appState } from '@/stores'
+import { store } from '@/store'
+import { readIsLoggedIn } from '@/store/main/getters'
+import { dispatchCheckLoggedIn } from '@/store/main/actions'
 export default defineComponent({
   name: 'App',
   setup() {
-    const store = appState()
     return {
-      isLoggedIn: store.readLoggedIn,
+      isLoggedIn: readIsLoggedIn(store),
     }
+  },
+  created() {
+    dispatchCheckLoggedIn(this.$store)
   },
 })
 </script>
