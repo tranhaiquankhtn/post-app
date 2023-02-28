@@ -10,6 +10,7 @@
         </v-layout>
       </v-main>
       <router-view v-else />
+      <notification-manager />
     </v-app>
   </div>
 </template>
@@ -18,8 +19,13 @@ import { defineComponent } from 'vue'
 import { store } from '@/store'
 import { readIsLoggedIn } from '@/store/main/getters'
 import { dispatchCheckLoggedIn } from '@/store/main/actions'
+
+import NotificationManager from '@/components/NotificationManager.vue'
 export default defineComponent({
   name: 'App',
+  components: {
+    NotificationManager,
+  },
   setup() {
     return {
       isLoggedIn: readIsLoggedIn(store),

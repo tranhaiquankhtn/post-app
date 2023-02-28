@@ -64,7 +64,7 @@ def update_self(
     if not email:
         user_in.email = email
 
-    user = store.user_store.update(db=db, db_obj=current_user, obj_in=user_in)
+    user = store.user_store.update(db=db, user_in_db=current_user, obj_in=user_in)
     return user
 
 

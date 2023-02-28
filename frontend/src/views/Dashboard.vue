@@ -9,10 +9,9 @@ export default defineComponent({
     return {
       greetUser: computed(() => {
         const userProfile = readUserProfile(store)
-        console.log('userProfile: ', userProfile)
         if (userProfile) {
-          if (userProfile.fullName) {
-            return userProfile.fullName
+          if (userProfile.full_name) {
+            return userProfile.full_name
           }
           return userProfile.email
         }

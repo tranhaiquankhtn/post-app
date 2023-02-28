@@ -13,14 +13,7 @@ export const mutations = {
     state.loggedInError = loggedInError
   },
   setUserProfile(state: AppState, profile: any) {
-    console.log('set_user_profile: ', profile)
-    state.userProfile = {
-      id: profile?.id,
-      email: profile?.email,
-      fullName: profile?.full_name,
-      isActive: profile?.is_active,
-      isSuperUser: profile?.is_superuser,
-    }
+      state.userProfile = profile
   },
   addNotification(state: AppState, notification: AppNotification) {
     state.notifications.push(notification)

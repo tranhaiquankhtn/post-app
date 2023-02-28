@@ -3,7 +3,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import(/* webpackChunkName: "main" */ '@/views/AppRouter.vue'),
+    component: () =>
+      import(/* webpackChunkName: "main" */ '@/views/AppRouter.vue'),
     children: [
       {
         path: '/login',
@@ -21,9 +22,20 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/Dashboard.vue'),
           },
           {
+            path: '/main/profile/view',
+            name: 'UserProfile',
+            component: () => import('@/views/main/profile/UserProfile.vue'),
+          },
+          {
+            path: '/main/profile/edit',
+            name: 'UserProfileEdit',
+            component: () => import('@/views/main/profile/UserProfileEdit.vue'),
+          },
+          {
             path: '/main/home',
             name: 'Home',
-            component: () => import(/* webpackChunkName: "home" */ '@/views/HomeView.vue'),
+            component: () =>
+              import(/* webpackChunkName: "home" */ '@/views/HomeView.vue'),
           },
         ],
       },

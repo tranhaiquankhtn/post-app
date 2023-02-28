@@ -9,10 +9,16 @@ export const getters = {
   isLoggedIn: (state: AppState) => state.isLoggedIn,
   showDrawer: (state: AppState) => state.showDrawer,
   miniDrawer: (state: AppState) => state.miniDrawer,
+  firstNotification: (state: AppState) =>
+    state.notifications.length > 0 && state.notifications[0],
   hasAdminAccess: (state: AppState) => {
     console.log('userProfile: ', state.userProfile)
-    return state.userProfile && state.userProfile.isActive && state.userProfile.isSuperUser
-  }
+    return (
+      state.userProfile &&
+      state.userProfile.is_active &&
+      state.userProfile.is_superuser
+    )
+  },
 }
 
 const { read } = getStoreAccessors<AppState, State>('')
@@ -24,3 +30,4 @@ export const readIsLoggedIn = read(getters.isLoggedIn)
 export const readShowDrawer = read(getters.showDrawer)
 export const readMiniDrawer = read(getters.miniDrawer)
 export const readHasAdminAccess = read(getters.hasAdminAccess)
+export const readFirstNotification = read(getters.firstNotification)

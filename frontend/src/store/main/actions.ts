@@ -7,12 +7,13 @@ import {
   commitSetLogInError,
   commitAddNotification,
   commitSetUserProfile,
+  commitRemoveNotification,
 } from './mutations'
 import { getStoreAccessors } from 'typesafe-vuex'
 
 import { authApi } from '@/apis/auth'
 import { userApi } from '@/apis/user'
-import { IUserProfile } from '@/types/profile'
+import { IUserProfile, IUserProfileUpdate } from '@/types/profile'
 
 import { getLocalToken, removeLocalToken, saveLocalToken } from '@/utils'
 import router from '@/router'
@@ -20,7 +21,10 @@ import { AxiosError } from 'axios'
 
 type AppContext = ActionContext<AppState, State>
 export const actions = {
-  async actionLogIn(context: AppContext, payload: { username: string; password: string }) {
+  async actionLogIn(
+    context: AppContext,
+    payload: { username: string; password: string },
+  ) {
     try {
       const res = await authApi.login(payload.username, payload.password)
       const token = res.data.access_token
@@ -61,7 +65,7 @@ export const actions = {
   },
   async actionGetUserProfile(context: AppState, token: string) {
     try {
-      const res = await userApi.getProfile(token)
+      const res = await userApi.getSelf(token)
       const profile = res.data
       if (profile) {
         commitSetUserProfile(context, profile)
@@ -70,8 +74,41 @@ export const actions = {
       await dispatchHandleApiError(context, e)
     }
   },
+  async actionUpdateUserProfile(
+    context: AppContext,
+    profile: IUserProfileUpdate,
+  ) {
+    const loadingNotification: AppNotification = {
+      msg: 'Updating',
+      color: 'info',
+    }
+    try {
+      commitAddNotification(context, loadingNotification)
+      const res = await Promise.all([
+        userApi.updateSelf(context.state.token, profile),
+        await new Promise((resolved, _) => setTimeout(resolved, 500)),
+      ])[0]
+      console.log('updated profile: ', res?.data)
+      commitSetUserProfile(context, res?.data)
+      commitRemoveNotification(context, loadingNotification)
+      commitAddNotification(context, {
+        msg: 'Profile updated',
+        color: 'success',
+      })
+    } catch (e) {
+      await dispatchHandleApiError(context, e)
+      commitRemoveNotification(context, loadingNotification)
+      commitAddNotification(context, {
+        msg: 'Update Failed',
+        color: 'error',
+      })
+    }
+  },
   async actionRouteLogIn(_: AppContext) {
-    if (router.currentRoute.value.path === '/login' || router.currentRoute.value.path === '') {
+    if (
+      router.currentRoute.value.path === '/login' ||
+      router.currentRoute.value.path === ''
+    ) {
       console.log('actionRouteLogIn(): go to main')
       router.push('/main')
     }
@@ -93,11 +130,9 @@ export const actions = {
       token = context.state.token
       if (!token) {
         const tokenLocal = getLocalToken()
-        console.log('tokenLocal=', tokenLocal)
         if (tokenLocal) {
           commitSetToken(context, tokenLocal)
           token = tokenLocal
-          console.log('loaded token=', token)
         }
       }
 
@@ -107,13 +142,24 @@ export const actions = {
         return
       }
       try {
-        const res = await userApi.getProfile(token)
+        const res = await userApi.getSelf(token)
         commitSetLogIn(context, true)
         commitSetUserProfile(context, res.data)
       } catch (e) {
         await dispatchRemoveLogIn(context)
       }
     }
+  },
+  async actionRemoveNotification(
+    context: AppContext,
+    payload: { notification: AppNotification; timeout: number },
+  ) {
+    return new Promise((resolve, _) => {
+      setTimeout(() => {
+        commitRemoveNotification(context, payload.notification)
+        resolve(true)
+      }, payload.timeout)
+    })
   },
 }
 
@@ -122,7 +168,11 @@ export const dispatchLogIn = dispatch(actions.actionLogIn)
 export const dispatchLogOut = dispatch(actions.actionLogOut)
 export const dispatchRemoveLogIn = dispatch(actions.actionRemoveLogIn)
 export const dispatchGetUserProfile = dispatch(actions.actionGetUserProfile)
+export const dispatchUpdateUserProfile = dispatch(
+  actions.actionUpdateUserProfile,
+)
 export const dispatchRouteLogIn = dispatch(actions.actionRouteLogIn)
 export const dispatchRouteLogOut = dispatch(actions.actionRouteLogOut)
 export const dispatchHandleApiError = dispatch(actions.actionHandleApiError)
 export const dispatchCheckLoggedIn = dispatch(actions.actionCheckLoggedIn)
+export const dispatchRemoveNotification = dispatch(actions.actionRemoveNotification)

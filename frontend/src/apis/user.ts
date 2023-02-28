@@ -4,8 +4,11 @@ import { IUserProfile, IUserProfileCreate, IUserProfileUpdate } from '@/types/pr
 import { apiUrl } from '@/env'
 
 export const userApi = {
-    async getProfile(token: string) {
+    async getSelf(token: string) {
         return axios.get<IUserProfile>(`${apiUrl}/api/v1/users/self`, authHeader(token))
+    },
+    async updateSelf(token: string, profile: IUserProfileUpdate) {
+        return axios.put(`${apiUrl}/api/v1/users/self`, profile, authHeader(token))
     },
     async getUsers(token: string) {
         return axios.get<IUserProfile[]>(`${apiUrl}/api/v1/users`, authHeader(token))

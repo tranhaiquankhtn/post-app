@@ -35,7 +35,7 @@ export const actions = {
       const res = (
         await Promise.all([
           userApi.createUser(context.rootState.main.token, profile),
-          await new Promise((resolve, reject) => setTimeout(resolve, 500)),
+          await new Promise((resolve, _) => setTimeout(resolve, 500)),
         ])
       )[0]
       commitSetUser(context, res.data)
@@ -61,7 +61,7 @@ export const actions = {
       const res = (
         await Promise.all([
           userApi.updateUser(context.rootState.main.token, payload.id, payload.profile),
-          await new Promise((resolve, reject) => setTimeout(resolve, 500)),
+          await new Promise((resolve, _) => setTimeout(resolve, 500)),
         ])
       )[0]
 
