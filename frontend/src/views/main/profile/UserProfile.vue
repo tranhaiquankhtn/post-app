@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-card class="ma-3 pa-3" flat outlined>
+    <v-card class="ma-3 pa-3" variant="outlined">
       <v-card-title primary-title class="text-info"> User Profile</v-card-title>
       <v-divider></v-divider>
       <v-card-text>
@@ -42,7 +42,8 @@
 <script setup lang="ts">
 import { defineComponent, ref, type Ref } from 'vue'
 import { store } from '@/store'
+import { IUserProfile } from '@/types/profile'
 import { readUserProfile } from '@/store/main/getters'
 
-const userProfile: Ref<IUserProfile> = readUserProfile(store)
+const userProfile: Ref<IUserProfile> = ref(readUserProfile(store))
 </script>

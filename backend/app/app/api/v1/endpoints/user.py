@@ -15,7 +15,7 @@ router = APIRouter()
 def get_users(
     db: Session = Depends(deps.get_db), skip: int = 0, limit: int = 100
 ) -> Any:
-    return store.user.get_multi(db, skip=skip, limit=limit)
+    return store.user_store.get_multi(db, skip=skip, limit=limit)
 
 
 @router.post("", response_model=schemas.User)
@@ -57,12 +57,12 @@ def update_self(
     user_data = jsonable_encoder(current_user)
     user_in = schemas.UserUpdate(**user_data)
 
-    if not password:
-        user_in.password = password
-    if not full_name:
+    if full_name:
         user_in.full_name = full_name
-    if not email:
+    if email:
         user_in.email = email
+    if password:
+        user_in.password = password
 
     user = store.user_store.update(db=db, user_in_db=current_user, obj_in=user_in)
     return user

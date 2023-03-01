@@ -5,7 +5,10 @@ import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'typesafe-vuex'
 
 import { commitSetUsers, commitSetUser } from './mutations'
-import { commitAddNotification, commitRemoveNotification } from '../main/mutations'
+import {
+  commitAddNotification,
+  commitRemoveNotification,
+} from '../main/mutations'
 
 import { AppNotification } from '../main/state'
 import { dispatchHandleApiError } from '../main/actions'
@@ -32,12 +35,10 @@ export const actions = {
         showProgress: true,
       }
       commitAddNotification(context, loadingNotification)
-      const res = (
-        await Promise.all([
-          userApi.createUser(context.rootState.main.token, profile),
-          await new Promise((resolve, _) => setTimeout(resolve, 500)),
-        ])
-      )[0]
+      const [res, _] = await Promise.all([
+        userApi.createUser(context.rootState.main.token, profile),
+        new Promise((resolve, _) => setTimeout(resolve, 500)),
+      ])
       commitSetUser(context, res.data)
       commitRemoveNotification(context, loadingNotification)
       commitAddNotification(context, {
@@ -60,7 +61,11 @@ export const actions = {
       commitAddNotification(context, loadingNotification)
       const res = (
         await Promise.all([
-          userApi.updateUser(context.rootState.main.token, payload.id, payload.profile),
+          userApi.updateUser(
+            context.rootState.main.token,
+            payload.id,
+            payload.profile,
+          ),
           await new Promise((resolve, _) => setTimeout(resolve, 500)),
         ])
       )[0]

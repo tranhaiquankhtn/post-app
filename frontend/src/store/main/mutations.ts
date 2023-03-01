@@ -2,6 +2,8 @@ import { getStoreAccessors } from 'typesafe-vuex'
 import { State } from '../state'
 import { AppNotification, AppState } from './state'
 
+import { IUserProfile } from '@/types/profile'
+
 export const mutations = {
   setToken(state: AppState, token: string) {
     state.token = token
@@ -12,8 +14,8 @@ export const mutations = {
   setLogInError(state: AppState, loggedInError: boolean) {
     state.loggedInError = loggedInError
   },
-  setUserProfile(state: AppState, profile: any) {
-      state.userProfile = profile
+  setUserProfile(state: AppState, profile: IUserProfile) {
+    state.userProfile = profile
   },
   addNotification(state: AppState, notification: AppNotification) {
     state.notifications.push(notification)

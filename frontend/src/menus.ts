@@ -32,7 +32,7 @@ export const menus: IMenuGroup[] = [
       {
         icon: 'mdi-file-document-multiple-outline',
         title: 'Post',
-        link: '/main/posts/view',
+        link: '/main/post/view',
       },
     ],
   },

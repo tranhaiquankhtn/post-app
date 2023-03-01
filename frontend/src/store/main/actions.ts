@@ -80,16 +80,16 @@ export const actions = {
   ) {
     const loadingNotification: AppNotification = {
       msg: 'Updating',
-      color: 'info',
+      color: 'primary',
+      showProgress: true
     }
     try {
       commitAddNotification(context, loadingNotification)
-      const res = await Promise.all([
+      const [res, _] = await Promise.all([
         userApi.updateSelf(context.state.token, profile),
-        await new Promise((resolved, _) => setTimeout(resolved, 500)),
-      ])[0]
-      console.log('updated profile: ', res?.data)
-      commitSetUserProfile(context, res?.data)
+        new Promise((resolved, _) => setTimeout(resolved, 500)),
+      ])
+      await commitSetUserProfile(context, res?.data)
       commitRemoveNotification(context, loadingNotification)
       commitAddNotification(context, {
         msg: 'Profile updated',
@@ -109,7 +109,6 @@ export const actions = {
       router.currentRoute.value.path === '/login' ||
       router.currentRoute.value.path === ''
     ) {
-      console.log('actionRouteLogIn(): go to main')
       router.push('/main')
     }
   },
@@ -175,4 +174,6 @@ export const dispatchRouteLogIn = dispatch(actions.actionRouteLogIn)
 export const dispatchRouteLogOut = dispatch(actions.actionRouteLogOut)
 export const dispatchHandleApiError = dispatch(actions.actionHandleApiError)
 export const dispatchCheckLoggedIn = dispatch(actions.actionCheckLoggedIn)
-export const dispatchRemoveNotification = dispatch(actions.actionRemoveNotification)
+export const dispatchRemoveNotification = dispatch(
+  actions.actionRemoveNotification,
+)

@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-card flat outlined>
+    <v-card variant="outlined">
       <v-card-title primary-text class="text-info">Edit Profile</v-card-title>
       <v-divider></v-divider>
       <v-card-text>
@@ -27,10 +27,11 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
+        <v-spacer />
         <v-btn @click="$router.back()">Cancel</v-btn>
         <v-btn @click="reset" color="error" variant="tonal">Reset</v-btn>
         <v-btn
-          @click="onSubmit"
+          @click="submit"
           type="submit"
           color="info"
           variant="flat"
@@ -52,7 +53,6 @@ import { commitAddNotification } from '@/store/main/mutations'
 import { readFirstNotification } from '@/store/main/getters'
 
 export default defineComponent({
-  name: 'UserProfileEdit',
   setup() {
     return {
       valid: true,
@@ -71,9 +71,8 @@ export default defineComponent({
     }
   },
   methods: {
-    async onSubmit() {
+    async submit() {
       const v = await this.$refs.form.validate()
-      console.log('valid: ', v)
       if (v.valid) {
         const updatedProfile: IUserProfileUpdate = {
           email: this.email,
