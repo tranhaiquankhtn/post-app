@@ -1,7 +1,13 @@
 <template>
   <v-container fluid>
-    <v-card class="ma-3 pa-3" variant="outlined">
-      <v-card-title primary-title class="text-info"> User Profile</v-card-title>
+    <v-card variant="outlined">
+      <v-toolbar dark>
+        <template v-slot:prepend>
+          <v-card-title primary-title class="text-info">
+            User Profile</v-card-title
+          >
+        </template>
+      </v-toolbar>
       <v-divider></v-divider>
       <v-card-text>
         <div class="my-4">

@@ -11,7 +11,7 @@ export const mutations = {
         state.users = users
     },
     setUsers(state: AdminState, users: IUserProfile[]) {
-        state.users = users
+        state.users = [...users]
     }
 }
 

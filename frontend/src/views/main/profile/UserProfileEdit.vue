@@ -1,7 +1,14 @@
 <template>
   <v-container fluid>
-    <v-card variant="outlined">
-      <v-card-title primary-text class="text-info">Edit Profile</v-card-title>
+    <v-card class="mx-auto" variant="outlined">
+      <v-toolbar dark flat>
+        <template v-slot:prepend>
+          <v-card-title primary-text class="text-info"
+            >Edit Profile</v-card-title
+          >
+        </template>
+      </v-toolbar>
+
       <v-divider></v-divider>
       <v-card-text>
         <v-form

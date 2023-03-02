@@ -34,6 +34,11 @@ export const menus: IMenuGroup[] = [
         title: 'Post',
         link: '/main/post/view',
       },
+      {
+        icon: 'mdi-file-plus-outline',
+        title: 'Create Post',
+        link: '/main/post/create',
+      },
     ],
   },
   {

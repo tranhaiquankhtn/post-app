@@ -71,7 +71,7 @@ watchEffect(async () => {
     if (newNoti) {
       dispatchRemoveNotification(store, {
         notification: newNoti,
-        timeout: 6500,
+        timeout: 2000,
       })
     }
   }

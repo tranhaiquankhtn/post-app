@@ -52,6 +52,14 @@ const routes: RouteRecordRaw[] = [
                 path: 'view',
                 component: () => import('@/views/main/post/Post.vue'),
               },
+              {
+                path: 'create',
+                component: () => import('@/views/main/post/PostCreate.vue'),
+              },
+              {
+                path: 'edit/:id',
+                component: () => import('@/views/main/post/PostEdit.vue'),
+              },
             ],
           },
           {

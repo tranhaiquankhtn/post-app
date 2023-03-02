@@ -2,9 +2,13 @@
   <div>
     <v-container fluid>
       <v-card variant="outlined">
-        <v-card-title primary-title class="text-info">
-          Change Password</v-card-title
-        >
+        <v-toolbar dark>
+          <template v-slot:prepend>
+            <v-card-title primary-title class="text-info">
+              Change Password</v-card-title
+            >
+          </template>
+        </v-toolbar>
         <v-divider />
         <v-card-text>
           <div class="my-3">

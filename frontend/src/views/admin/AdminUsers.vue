@@ -2,7 +2,7 @@
   <div>
     <v-container fluid>
       <v-card variant="outlined">
-        <v-toolbar dark flat>
+        <v-toolbar dark>
         <template v-slot:prepend>
           <v-card-title class="headline text-info">Manage User</v-card-title>
           </template>

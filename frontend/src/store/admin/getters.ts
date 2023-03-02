@@ -15,4 +15,4 @@ export const getters = {
 const { read } = getStoreAccessors<AdminState | any, State>('')
 
 export const readUsers = read(getters.users)
-export const readUserBy = read(getters.userById)
+export const readUserById = read(getters.userById)

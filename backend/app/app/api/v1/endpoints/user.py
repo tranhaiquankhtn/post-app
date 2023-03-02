@@ -31,7 +31,7 @@ def create_user(
             status_code=status.HTTP_400_BAD_REQUEST, detail="User exists"
         )
 
-    user = store.user_store.create(db, obj_in=user_in)
+    user = store.user_store.create(db, user_in=user_in)
     # if settings.EMAILS_ENABLED and user_in.email:
     #     send_new_email_account(
     #         email_to=user_in.email, username=user_in.email, password=user_in.password
@@ -100,4 +100,4 @@ def update_user(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
-    return store.user_store.update(db=db, db_obj=user, obj_in=user_in)
+    return store.user_store.update(db=db, user_in_db=user, obj_in=user_in)
