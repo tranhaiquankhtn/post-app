@@ -33,13 +33,13 @@
             </template>
             <v-list-item-title v-text="item.title" />
           </v-list-item>
-        </div>
         <v-divider />
+        </div>
       </v-list>
     </v-navigation-drawer>
 
     <!-- App-bar -->
-    <v-app-bar color="info" app>
+    <v-app-bar color="info" app floating>
       <v-app-bar-nav-icon @click.stop="showDrawer = !showDrawer" />
       <v-spacer />
       <v-menu>
@@ -97,7 +97,6 @@ export default defineComponent({
   setup() {
     const theme = useTheme()
     const isAdmin = readHasAdminAccess(store)
-    console.log('isAdmin:', isAdmin)
     return {
       title: appName,
       appMenus: menus,

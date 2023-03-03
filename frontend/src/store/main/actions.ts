@@ -13,6 +13,9 @@ import { getStoreAccessors } from 'typesafe-vuex'
 
 import { authApi } from '@/apis/auth'
 import { userApi } from '@/apis/user'
+import { postApi } from '@/apis/post'
+
+import { IPost, IPostCreate, IPostUpdate } from '@/types/post'
 import { IUserProfile, IUserProfileUpdate } from '@/types/profile'
 
 import { getLocalToken, removeLocalToken, saveLocalToken } from '@/utils'
@@ -43,7 +46,6 @@ export const actions = {
         msg: `Welcome ${payload.username}`,
         color: 'success',
       })
-      console.log('log-in done')
     } catch (e) {
       console.error(e)
       await dispatchLogOut(context)
@@ -80,8 +82,8 @@ export const actions = {
   ) {
     const loadingNotification: AppNotification = {
       msg: 'Updating',
-      color: 'primary',
-      showProgress: true
+      color: 'info',
+      showProgress: true,
     }
     try {
       commitAddNotification(context, loadingNotification)
@@ -118,7 +120,6 @@ export const actions = {
     }
   },
   async actionHandleApiError(context: AppContext, error: AxiosError) {
-    console.error(error)
     if (error.response?.status === 401) {
       await dispatchLogOut(context)
     }

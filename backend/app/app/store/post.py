@@ -13,7 +13,7 @@ class PostStore(StoreBase[Post, PostCreate, PostUpdate]):
         db_obj = self.model(**obj_in_data, owner_id=uid)
         db.add(db_obj)
         db.commit()
-        db.refresh()
+        db.refresh(db_obj)
         return db_obj
 
 

@@ -12,7 +12,6 @@ export const getters = {
   firstNotification: (state: AppState) =>
     state.notifications.length > 0 && state.notifications[0],
   hasAdminAccess: (state: AppState) => {
-    console.log('userProfile: ', state.userProfile)
     return (
       state.userProfile &&
       state.userProfile.is_active &&

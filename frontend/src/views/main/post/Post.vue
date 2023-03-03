@@ -1,19 +1,21 @@
 <template>
   <div>
+    <Loading :is-loading="isLoading" />
+    <ConfirmDialog ref="confirmDlg" />
     <v-container fluid>
       <v-card variant="outlined">
         <v-toolbar dark>
-        <template v-slot:prepend>
-          <v-card-title class="headline text-info">Posts</v-card-title>
+          <template v-slot:prepend>
+            <v-card-title class="headline text-info">Posts</v-card-title>
           </template>
           <template v-slot:append>
-          <v-btn
-            to="/main/post/create"
-            color="info"
-            variant="flat"
-            prepend-icon="mdi-account-plus"
-            >Create User
-          </v-btn>
+            <v-btn
+              to="/main/post/create"
+              color="info"
+              variant="flat"
+              prepend-icon="mdi-file-plus"
+              >Create Post
+            </v-btn>
           </template>
         </v-toolbar>
         <v-divider />
@@ -29,6 +31,17 @@
               </tr>
             </thead>
             <tbody>
+              <tr v-if="posts.length < 1">
+                <td colspan="5">
+                  <v-alert
+                    transition="fade-transition"
+                    type="warning"
+                    density="compact"
+                  >
+                    No posts found
+                  </v-alert>
+                </td>
+              </tr>
               <tr v-for="post in posts" :key="post.id">
                 <td>{{ post.title }}</td>
                 <td>{{ post.content }}</td>
@@ -50,13 +63,13 @@
                       />
                     </template>
                   </v-tooltip>
-                  <v-tooltip text="Delete Post">
+                  <v-tooltip text="Remove Post">
                     <template v-slot:activator="{ props }">
                       <v-btn
                         v-bind="props"
                         color="error"
                         size="small"
-                        icon="mdi-trash"
+                        icon="mdi-trash-can-outline"
                         class="ma-2"
                         variant="text"
                         @click="removePost(post.id)"
@@ -73,13 +86,22 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, type Ref, reactive, onBeforeMount } from 'vue'
+import { ref, type Ref, reactive, onMounted, computed, toRef } from 'vue'
+import Loading from '@/components/Loading.vue'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
 
+import { postApi } from '@/apis/post'
 import { store } from '@/store'
-
+import { readToken } from '@/store/main/getters'
+import {
+  commitAddNotification,
+  commitRemoveNotification,
+} from '@/store/main/mutations'
 import { IPost } from '@/types/post'
 
-const posts: Ref<IPost[]> = ref([{ id: 1,title: 'tile', content:'content', created:'2023-01-01', modified: '2023-01-01' }])
+const isLoading: Ref<boolean> = ref(false)
+const posts: IPost[] = ref([])
+const confirmDlg = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 const headers = [
   {
     title: 'Title',
@@ -110,11 +132,47 @@ const headers = [
     key: 'id',
   },
 ]
-const removePost= (postId: number) => {
-    console.log('remove post with id=', postId)
+const removePost = async (postId: number) => {
+  if (
+    await confirmDlg.value.open('confirm', 'Do you want to delete this post?', {
+      width: 300,
+      color: 'info',
+    })
+  ) {
+    const loadingNotification = { msg: 'Post deleting', color: 'info' }
+    try {
+      commitAddNotification(store, loadingNotification)
+      const token = readToken(store)
+      const res = await postApi.removePost(token, postId)
+      posts.value = [...posts.value.filter((e) => e.id != postId)]
+      commitRemoveNotification(store, loadingNotification)
+      commitAddNotification(store, { msg: 'Post deleted', color: 'success' })
+    } catch (e) {
+      console.error('error: ', e)
+      commitRemoveNotification(store, loadingNotification)
+      commitAddNotification(store, {
+        msg: 'Failed to delete post',
+        color: 'error',
+      })
+    }
+  }
 }
-onBeforeMount(async () => {
-  /* await dispatchGetPosts(store) */
-  /* posts.value = [...readPosts(store)] */
+onMounted(async () => {
+  try {
+    isLoading.value = true
+    const token = readToken(store)
+    const res = await postApi.getPosts(token)
+    if (res) {
+      posts.value = [...res.data]
+    }
+  } catch (e) {
+    console.error(e)
+    commitAddNotification(store, {
+      msg: 'Failed to fetch posts',
+      color: 'error',
+    })
+  } finally {
+    isLoading.value = false
+  }
 })
 </script>

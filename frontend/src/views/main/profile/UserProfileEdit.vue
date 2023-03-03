@@ -56,7 +56,6 @@ import { IUserProfileUpdate } from '@/types/profile'
 import { readUserProfile } from '@/store/main/getters'
 import { dispatchUpdateUserProfile } from '@/store/main/actions'
 
-import { commitAddNotification } from '@/store/main/mutations'
 import { readFirstNotification } from '@/store/main/getters'
 
 export default defineComponent({

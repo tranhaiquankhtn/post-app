@@ -1,5 +1,5 @@
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -14,11 +14,11 @@ class PostBase(BaseModel):
 class PostCreate(PostBase):
     title: str
     content: str
-    created: datetime
 
 
 class PostUpdate(PostBase):
-    modified: datetime
+    title: str
+    content: str
 
 
 class PostInDbBase(PostBase):
