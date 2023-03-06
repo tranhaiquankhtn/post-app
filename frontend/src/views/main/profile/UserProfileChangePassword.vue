@@ -3,7 +3,7 @@
     <v-container fluid>
       <v-card variant="outlined">
         <v-toolbar dark>
-          <template v-slot:prepend>
+          <template #prepend>
             <v-card-title primary-title class="text-info">
               Change Password</v-card-title
             >
@@ -16,8 +16,8 @@
               User
             </div>
             <div
-              class="text-subtitle-1 text-blue-darken-2"
               v-if="userProfile && userProfile.email"
+              class="text-subtitle-1 text-blue-darken-2"
             >
               {{ userProfile.email }}
             </div>
@@ -30,16 +30,16 @@
             @submit.prevent
           >
             <v-text-field
+              v-model="password"
               label="Password"
               type="password"
-              v-model="password"
               :rules="passwordRules"
               required
             ></v-text-field>
             <v-text-field
+              v-model="confirmed_password"
               label="Confirm Password"
               type="password"
-              v-model="confirmed_password"
               :rules="passwordConfirmedRules"
               required
             ></v-text-field>
@@ -48,13 +48,13 @@
         <v-card-actions>
           <v-spacer />
           <v-btn @click="$router.back()">Cancel</v-btn>
-          <v-btn @click="reset" color="error" variant="tonal">Reset</v-btn>
+          <v-btn color="error" variant="tonal" @click="reset">Reset</v-btn>
           <v-btn
-            @click="submit"
             type="submit"
             color="info"
             variant="flat"
             :disabled="!valid"
+            @click="submit"
             >Save</v-btn
           >
         </v-card-actions>
@@ -74,19 +74,21 @@ import { IUserProfile, IUserProfileUpdate } from '@/types/profile'
 export default defineComponent({
   setup() {
     const valid: Ref<boolean> = ref(true)
-    const password: Ref<str> = ref('')
-    const confirmed_password: Ref<str> = ref('')
+    const password: Ref<string> = ref('')
+    const confirmed_password: Ref<string> = ref('')
     const passwordRules = [
-      (v) => !!v || 'Password is required',
-      (v) => (v && v.length > 6) || 'Name must be at least 6 character',
+      (v: string) => !!v || 'Password is required',
+      (v: string) => (v && v.length > 6) || 'Name must be at least 6 character',
     ]
-    const passwordConfirmedRules = [
+    const passwordConfirmedRules: any[] = [
       ...passwordRules,
-      (v) =>
+      (v: string) =>
         (v && v === password.value) ||
         'Password and Confirmed Password are not matched',
     ]
-    const userProfile: Ref<IUserProfile> = readUserProfile(store)
+    const userProfile: Ref<IUserProfile> = ref(
+      readUserProfile(store) as IUserProfile,
+    )
     return {
       valid,
       password,
@@ -98,7 +100,7 @@ export default defineComponent({
   },
   methods: {
     async submit() {
-      const v = await this.$refs.form.validate()
+      const v = await (this.$refs.form as any).validate()
       if (v.valid) {
         const updatedProfile: IUserProfileUpdate = {}
         updatedProfile.password = this.password
@@ -109,7 +111,8 @@ export default defineComponent({
     reset() {
       this.password = ''
       this.confirmed_password = ''
-      this.$refs.form.resetValidation()
+
+      (this.$refs.form as any).resetValidation()
     },
   },
 })

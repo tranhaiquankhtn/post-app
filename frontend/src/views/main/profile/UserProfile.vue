@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-card variant="outlined">
       <v-toolbar dark>
-        <template v-slot:prepend>
+        <template #prepend>
           <v-card-title primary-title class="text-info">
             User Profile</v-card-title
           >
@@ -15,23 +15,23 @@
             Full Name
           </div>
           <div
-            class="text-subtitle-1 text-blue-darken-2"
             v-if="userProfile && userProfile.full_name"
+            class="text-subtitle-1 text-blue-darken-2"
           >
             {{ userProfile.full_name }}
           </div>
-          <div class="text-subtitle-1 text-blue-darken-2" v-else>----</div>
+          <div v-else class="text-subtitle-1 text-blue-darken-2">----</div>
           <div class="my-3">
             <div class="text-body-1 text-medium-emphasis text-grey-lighten-2">
               Email
             </div>
             <div
-              class="text-subtitle-1 text-blue-darken-2"
               v-if="userProfile && userProfile.email"
+              class="text-subtitle-1 text-blue-darken-2"
             >
               {{ userProfile.email }}
             </div>
-            <div class="text-subtitle-1 text-blue-darken-2" v-else>----</div>
+            <div v-else class="text-subtitle-1 text-blue-darken-2">----</div>
           </div>
         </div>
       </v-card-text>
@@ -46,10 +46,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { store } from '@/store'
 import { IUserProfile } from '@/types/profile'
 import { readUserProfile } from '@/store/main/getters'
 
-const userProfile: Ref<IUserProfile> = ref(readUserProfile(store))
+const userProfile: Ref<IUserProfile> = ref(
+  readUserProfile(store) as IUserProfile,
+)
 </script>

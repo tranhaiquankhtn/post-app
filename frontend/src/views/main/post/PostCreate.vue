@@ -6,10 +6,10 @@
       </v-toolbar>
       <v-divider></v-divider>
       <v-card-text>
-        <v-form ref="form" fast-fail v-model="valid" @submit.prevent>
+        <v-form ref="form" v-model="valid" fast-fail @submit.prevent>
           <v-text-field
-            label="title"
             v-model="title"
+            label="title"
             :rules="[
               (v) => !!v || 'Title is required',
               (v) =>
@@ -19,9 +19,9 @@
             required
           />
           <v-textarea
+            v-model="content"
             label="content"
             append-inner-icon="mdi-comment"
-            v-model="content"
             :rules="[
               (v) => !!v || 'Content is required',
               (v) =>
@@ -36,11 +36,11 @@
         <v-spacer />
         <v-btn @click="$router.back()">Cancel</v-btn>
         <v-btn
-          @click="submit"
           type="submit"
           color="info"
           variant="flat"
           :disabled="!valid"
+          @click="submit"
           >Submit</v-btn
         >
       </v-card-actions>
@@ -48,10 +48,12 @@
   </v-container>
 </template>
 <script setup lang="ts">
-import { ref, type Ref, computed } from 'vue'
+import { ref } from 'vue'
 import { store } from '@/store'
 import { readToken } from '@/store/main/getters'
 import { postApi } from '@/apis/post'
+import { AppNotification } from '@/store/main/state'
+import { IPostCreate } from '@/types/post'
 import router from '@/router'
 
 import {
@@ -72,13 +74,13 @@ const submit = async () => {
   const loadingNotification: AppNotification = {
     msg: 'Creating post',
     color: 'info',
-    showProgress: true
+    showProgress: true,
   }
 
   try {
     commitAddNotification(store, loadingNotification)
     const token = readToken(store)
-    const res = await postApi.createPost(token, post)
+    await postApi.createPost(token, post)
     commitRemoveNotification(store, loadingNotification)
     commitAddNotification(store, { msg: 'Post Created', color: 'success' })
     router.push({ path: '/main/post/view' })

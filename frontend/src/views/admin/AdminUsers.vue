@@ -3,17 +3,17 @@
     <v-container fluid>
       <v-card variant="outlined">
         <v-toolbar dark>
-        <template v-slot:prepend>
-          <v-card-title class="headline text-info">Manage User</v-card-title>
+          <template #prepend>
+            <v-card-title class="headline text-info">Manage User</v-card-title>
           </template>
-          <template v-slot:append>
-          <v-btn
-            to="/main/admin/users/create"
-            color="info"
-            variant="flat"
-            prepend-icon="mdi-account-plus"
-            >Create User
-          </v-btn>
+          <template #append>
+            <v-btn
+              to="/main/admin/users/create"
+              color="info"
+              variant="flat"
+              prepend-icon="mdi-account-plus"
+              >Create User
+            </v-btn>
           </template>
         </v-toolbar>
         <v-divider />
@@ -44,7 +44,7 @@
                 </td>
                 <td>
                   <v-tooltip text="Edit User">
-                    <template v-slot:activator="{ props }">
+                    <template #activator="{ props }">
                       <v-btn
                         v-bind="props"
                         color="info"
@@ -68,7 +68,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, type Ref, reactive, onBeforeMount } from 'vue'
+import { ref, type Ref, onBeforeMount } from 'vue'
 
 import { store } from '@/store'
 import { readUsers } from '@/store/admin/getters'

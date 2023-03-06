@@ -11,25 +11,25 @@
               <v-card-text>
                 <v-form @keyup.enter="submit">
                   <v-text-field
-                    @keyup.enter="submit"
                     v-model="email"
                     prepend-icon="mdi-account"
                     name="login"
                     label="Login"
                     type="text"
                     density="compact"
+                    @keyup.enter="submit"
                   >
                   </v-text-field>
 
                   <v-text-field
-                    @keyup.enter="submit"
+                    id="password"
                     v-model="password"
                     type="password"
                     prepend-icon="mdi-lock"
                     name="password"
                     label="Password"
-                    id="password"
                     density="compact"
+                    @keyup.enter="submit"
                   />
                 </v-form>
                 <div v-if="loggedInError">
@@ -51,7 +51,7 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click.prevent="submit" color="info" variant="flat"
+                <v-btn variant="flat" color="info" @click.prevent="submit"
                   >Login</v-btn
                 >
               </v-card-actions>

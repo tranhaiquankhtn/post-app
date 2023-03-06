@@ -4,7 +4,6 @@ import { store } from '@/store'
 import { readUserProfile } from '@/store/main/getters'
 
 export default defineComponent({
-  name: 'Dashboard',
   setup() {
     return {
       greetUser: computed(() => {

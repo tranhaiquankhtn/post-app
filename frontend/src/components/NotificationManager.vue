@@ -1,19 +1,19 @@
 <template>
   <div>
     <v-snackbar
-      variant="flat"
-      :color="currentNotification.color"
       v-model="show"
+      variant="flat"
+      :color="(currentNotification as AppNotification).color"
     >
-      <v-progress-circular class="ma-2" indeterminate v-show="showProgress" />
-      {{ currentNotification.msg || 'message' }}
-      <template v-slot:actions>
+      <v-progress-circular v-show="showProgress" class="ma-2" indeterminate />
+      {{ (currentNotification as AppNotification).msg || 'message' }}
+      <template #actions>
         <v-btn
-          @click.native="close"
           icon="mdi-close-circle"
           size="small"
           variant="flat"
-          :color="currentNotification.color"
+          :color="(currentNotification as AppNotification).color"
+          @click="close"
         />
       </template>
     </v-snackbar>
@@ -21,15 +21,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref, type Ref, watchEffect } from 'vue'
+import { ref, type Ref, watchEffect } from 'vue'
 import { AppNotification } from '@/store/main/state'
 
 import { store } from '@/store'
 import { readFirstNotification } from '@/store/main/getters'
-import {
-  dispatchRemoveLogin,
-  dispatchRemoveNotification,
-} from '@/store/main/actions'
+import { dispatchRemoveNotification } from '@/store/main/actions'
 import { commitRemoveNotification } from '@/store/main/mutations'
 
 const show: Ref<boolean> = ref(false)
@@ -47,8 +44,8 @@ const hide = async () => {
 }
 
 const removeCurrentNotification = async () => {
-  if (currentNotification) {
-    await commitRemoveNotification(store, currentNotification)
+  if (currentNotification.value) {
+    commitRemoveNotification(store, currentNotification)
   }
 }
 

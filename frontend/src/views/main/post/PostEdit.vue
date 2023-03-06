@@ -7,10 +7,10 @@
         </v-toolbar>
         <v-divider></v-divider>
         <v-card-text>
-          <v-form ref="form" fast-fail v-model="valid" @submit.prevent>
+          <v-form ref="form" v-model="valid" fast-fail @submit.prevent>
             <v-text-field
-              label="title"
               v-model="currentPost.title"
+              label="title"
               :rules="[
                 (v) => !!v || 'Title is required',
                 (v) =>
@@ -20,9 +20,9 @@
               required
             />
             <v-textarea
+              v-model="currentPost.content"
               label="content"
               append-inner-icon="mdi-comment"
-              v-model="currentPost.content"
               :rules="[
                 (v) => !!v || 'Content is required',
                 (v) =>
@@ -37,11 +37,11 @@
           <v-spacer />
           <v-btn @click="$router.back()">Cancel</v-btn>
           <v-btn
-            @click="submit"
             type="submit"
             color="info"
             variant="flat"
             :disabled="!valid"
+            @click="submit"
             >Submit</v-btn
           >
         </v-card-actions>
@@ -50,7 +50,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onBeforeMount, computed, reactive } from 'vue'
+import { ref, onBeforeMount, reactive } from 'vue'
 import { store } from '@/store'
 import router from '@/router'
 import { readToken } from '@/store/main/getters'
@@ -59,26 +59,22 @@ import {
   commitRemoveNotification,
 } from '@/store/main/mutations'
 import { postApi } from '@/apis/post'
-import { IPost, IPostUpdate } from '@/types/post'
+import { IPost } from '@/types/post'
 
 const valid = ref(true)
-const currentPost: IPost = reactive({ title: '', content: '' })
+const currentPost: IPost = reactive({ title: '', content: '' } as IPost)
 const submit = async () => {
-  const updatePost: IPostUpdate = {
-    title: currentPost.title,
-    content: currentPost.content,
-  }
   const loadingNotification = {
     msg: 'Updating post',
     color: 'info',
-    showProgress: true
+    showProgress: true,
   }
   try {
     commitAddNotification(store, loadingNotification)
     const token = readToken(store)
-    const res = await postApi.updatePost(
+    await postApi.updatePost(
       token,
-      router.currentRoute.value.params.id,
+      +router.currentRoute.value.params.id,
       currentPost,
     )
     commitRemoveNotification(store, loadingNotification)
@@ -98,7 +94,7 @@ onBeforeMount(async () => {
     const token = readToken(store)
     const res = await postApi.getPostById(
       token,
-      router.currentRoute.value.params.id,
+      +router.currentRoute.value.params.id,
     )
     if (res) {
       currentPost.id = res.data.id

@@ -25,7 +25,6 @@ def create_post(
     post_in: schemas.PostCreate,
     current_user: models.User = Depends(deps.get_current_user)
 ) -> models.Post:
-    logger.info(f'post_in={post_in}')
     if not post_in.title:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="title is required"
@@ -71,7 +70,12 @@ def update_post(
 
 
 @router.delete("/{post_id}", response_model=schemas.Post)
-def remove_post(db: Session = Depends(deps.get_db), *, post_id: int, current_user: models.User = Depends(deps.get_current_user)) -> models.Post:
+def remove_post(
+    db: Session = Depends(deps.get_db),
+    *,
+    post_id: int,
+    current_user: models.User = Depends(deps.get_current_user)
+) -> models.Post:
     post = store.post_store.get(db, post_id)
     if not post:
         raise HTTPException(

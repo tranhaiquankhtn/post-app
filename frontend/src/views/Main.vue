@@ -2,21 +2,21 @@
   <v-app>
     <!-- Drawer -->
     <v-navigation-drawer
+      v-model="showDrawer"
       persistent
       fixed
       app
       :mini-variant="miniDrawer"
-      v-model="showDrawer"
     >
       <v-list dense nav>
         <v-list-item
           prepend-avatar="https://thaiquan.dev/img/avatar.jpg#avatar"
         >
-          <v-list-item-title v-text="title.toUpperCase()" />
+          <v-list-item-title>{{ title.toUpperCase() }}</v-list-item-title>
         </v-list-item>
       </v-list>
       <v-divider />
-      <v-list dense nav v-for="(menu, idx) in appMenus" :key="idx" info>
+      <v-list v-for="(menu, idx) in appMenus" :key="idx" info dense nav>
         <div
           v-show="
             menu.header !== 'Admin' || (menu.header === 'Admin' && isAdmin)
@@ -28,12 +28,12 @@
             :key="item.title"
             :to="item.link"
           >
-            <template v-slot:prepend>
+            <template #prepend>
               <v-icon :icon="item.icon" />
             </template>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
-        <v-divider />
+          <v-divider />
         </div>
       </v-list>
     </v-navigation-drawer>
@@ -43,14 +43,14 @@
       <v-app-bar-nav-icon @click.stop="showDrawer = !showDrawer" />
       <v-spacer />
       <v-menu>
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-btn icon="mdi-account-circle" v-bind="props"></v-btn>
         </template>
         <v-list>
           <v-list-item to="/main/profile" prepend-icon="mdi-account">
             <v-list-subheader> Profile </v-list-subheader>
           </v-list-item>
-          <v-list-item @click="logout()" prepend-icon="mdi-logout">
+          <v-list-item prepend-icon="mdi-logout" @click="logout()">
             <v-list-subheader> Logout </v-list-subheader>
           </v-list-item>
         </v-list>
@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { useTheme } from 'vuetify'
 import { menus } from '@/menus'
 import { appName } from '@/env'
@@ -90,18 +90,23 @@ import {
   readShowDrawer,
   readHasAdminAccess,
 } from '@/store/main/getters'
-import { commitSetShowDrawer } from '@/store/main/mutations'
 
 export default defineComponent({
-  name: 'Main',
+  beforeRouteEnter(to: any, _: any, next: any) {
+    if (to.path === '/main') {
+      next('/main/dashboard')
+    } else {
+      next()
+    }
+  },
   setup() {
     const theme = useTheme()
     const isAdmin = readHasAdminAccess(store)
     return {
       title: appName,
       appMenus: menus,
-      miniDrawer: ref(store.miniDrawer),
-      showDrawer: ref(store.showDrawer),
+      miniDrawer: ref(readMiniDrawer(store)),
+      showDrawer: ref(readShowDrawer(store)),
       isAdmin,
       theme,
       toggleTheme: () =>
@@ -114,13 +119,6 @@ export default defineComponent({
     logout() {
       dispatchLogOut(this.$store)
     },
-  },
-  beforeRouteEnter(to: any, from: any, next: any) {
-    if (to.path === '/main') {
-      next('/main/dashboard')
-    } else {
-      next()
-    }
   },
 })
 </script>

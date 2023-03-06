@@ -1,9 +1,6 @@
 <template>
   <div class="text-center">
-    <v-overlay
-      :model-value="isLoading"
-      class="align-center justify-center"
-    >
+    <v-overlay class="align-center justify-center" :model-value="isLoading">
       <v-progress-circular
         color="info"
         indeterminate
@@ -15,11 +12,10 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue'
-const props = defineProps({
-isLoading: {
+defineProps({
+  isLoading: {
     type: Boolean,
-    default: false
-}
-
-});
+    default: false,
+  },
+})
 </script>

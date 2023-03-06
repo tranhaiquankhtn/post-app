@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-card variant="outlined">
       <v-toolbar dark>
-        <template v-slot:prepend>
+        <template #prepend>
           <v-card-title primary-title class="text-info">Edit User</v-card-title>
         </template>
       </v-toolbar>
@@ -27,15 +27,15 @@
           @submit.prevent
         >
           <v-text-field
-            label="Full Name"
             v-model="fullName"
+            label="Full Name"
             :rules="nameRules"
             required
           />
           <v-text-field
+            v-model="email"
             label="E-mail"
             type="email"
-            v-model="email"
             :rules="emailRules"
             required
           />
@@ -45,29 +45,29 @@
               (currently is {{ isSuperUser ? '' : 'not ' }}a superuser)</span
             >
           </div>
-          <v-checkbox label="Is SuperUser" v-model="isSuperUser" color="info" />
+          <v-checkbox v-model="isSuperUser" label="Is SuperUser" color="info" />
 
           <div class="subheading">User is active</div>
-          <v-checkbox label="Is active" v-model="isActive" color="info" />
+          <v-checkbox v-model="isActive" label="Is active" color="info" />
 
           <!-- password -->
           <v-checkbox
-            label="Set Password?"
             v-model="setPassword"
+            label="Set Password?"
             color="info"
           />
           <v-text-field
+            v-model="password"
             label="Password"
             type="password"
-            v-model="password"
             :disabled="!setPassword"
             :rules="setPassword ? passwordRules : []"
           ></v-text-field>
           <v-text-field
+            v-model="confirmed_password"
             label="Confirm Password"
             type="password"
             :disabled="!setPassword"
-            v-model="confirmed_password"
             :rules="setPassword ? passwordConfirmedRules : []"
           ></v-text-field>
         </v-form>
@@ -75,13 +75,13 @@
       <v-card-actions>
         <v-spacer />
         <v-btn @click="cancel">Cancel</v-btn>
-        <v-btn @click="reset" color="error" variant="tonal">Reset</v-btn>
+        <v-btn color="error" variant="tonal" @click="reset">Reset</v-btn>
         <v-btn
-          @click="submit"
           type="submit"
           color="info"
           variant="flat"
           :disabled="!valid"
+          @click="submit"
           >Save</v-btn
         >
       </v-card-actions>
@@ -101,21 +101,21 @@ export default defineComponent({
   setup() {
     const password = ref('')
     const passwordRules = [
-      (v) => !!v || 'Password is required',
-      (v) => (v && v.length > 6) || 'Name must be at least 6 character',
+      (v: any) => !!v || 'Password is required',
+      (v: any) => (v && v.length > 6) || 'Name must be at least 6 character',
     ]
-    const userProfile: IUserProfile = ref(null)
+    const userProfile: Ref<IUserProfile | any> = ref(null)
     return {
       valid: ref(true),
       fullName: ref(''),
       nameRules: [
-        (v) => !!v || 'Name is required',
-        (v) => (v && v.length > 2) || 'Name must be at least 3 character',
+        (v: any) => !!v || 'Name is required',
+        (v: any) => (v && v.length > 2) || 'Name must be at least 3 character',
       ],
       email: ref(''),
       emailRules: [
-        (v) => !!v || 'Email is required',
-        (v) =>
+        (v: any) => !!v || 'Email is required',
+        (v: any) =>
           (v && /^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(v)) ||
           'Must be a valid email',
       ],
@@ -127,7 +127,7 @@ export default defineComponent({
       confirmed_password: ref(''),
       passwordConfirmedRules: [
         ...passwordRules,
-        (v) =>
+        (v: any) =>
           (v && v === password.value) ||
           'Password and Confirmed Password are not matched',
       ],
@@ -135,11 +135,23 @@ export default defineComponent({
     }
   },
 
+  mounted() {
+    const user = readUserById(this.$store)(
+      +this.$router.currentRoute.value.params.id,
+    )
+    if (user) {
+      this.fullName = user.full_name
+      this.email = user.email
+      this.isActive = user.is_active
+      this.isSuperUser = user.is_superuser
+      this.userProfile = { ...user }
+      console.log('current_user=', this.userProfile)
+    }
+  },
   methods: {
     async submit() {
-      const v = await this.$refs.form.validate()
+      const v = await (this.$refs.form as any).validate()
       if (!v.valid) {
-        console.log('v=', v)
         return
       }
       const user: IUserProfileUpdate = {}
@@ -156,7 +168,6 @@ export default defineComponent({
       if (this.setPassword) {
         user.password = this.password
       }
-      console.log('update_user=', user)
       await dispatchUpdateUser(store, {
         id: this.userProfile!.id,
         profile: user,
@@ -166,26 +177,11 @@ export default defineComponent({
     async reset() {
       this.password = ''
       this.confirmed_password = ''
-      this.$refs.form.resetValidation()
+      (this.$refs.form as any).resetValidation()
     },
     cancel() {
       this.$router.push('/main/admin/users/all')
     },
-  },
-  mounted() {
-    const user = readUserById(this.$store)(
-      +this.$router.currentRoute.value.params.id,
-    )
-    if (user) {
-      console.log('is_active: ', this.isActive)
-      console.log('is_superuser: ', this.isSuperUser)
-      this.fullName = user.full_name
-      this.email = user.email
-      this.isActive = user.is_active
-      this.isSuperUser = user.is_superuser
-      this.userProfile = { ...user }
-      console.log('current_user=', this.userProfile)
-    }
   },
 })
 </script>

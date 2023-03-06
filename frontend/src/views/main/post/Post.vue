@@ -5,10 +5,10 @@
     <v-container fluid>
       <v-card variant="outlined">
         <v-toolbar dark>
-          <template v-slot:prepend>
+          <template #prepend>
             <v-card-title class="headline text-info">Posts</v-card-title>
           </template>
-          <template v-slot:append>
+          <template #append>
             <v-btn
               to="/main/post/create"
               color="info"
@@ -49,7 +49,7 @@
                 <td>{{ post.modified }}</td>
                 <td>
                   <v-tooltip text="Edit Post">
-                    <template v-slot:activator="{ props }">
+                    <template #activator="{ props }">
                       <v-btn
                         v-bind="props"
                         color="info"
@@ -64,7 +64,7 @@
                     </template>
                   </v-tooltip>
                   <v-tooltip text="Remove Post">
-                    <template v-slot:activator="{ props }">
+                    <template #activator="{ props }">
                       <v-btn
                         v-bind="props"
                         color="error"
@@ -86,7 +86,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, type Ref, reactive, onMounted, computed, toRef } from 'vue'
+import { ref, type Ref, onMounted } from 'vue'
 import Loading from '@/components/Loading.vue'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
 
@@ -100,7 +100,7 @@ import {
 import { IPost } from '@/types/post'
 
 const isLoading: Ref<boolean> = ref(false)
-const posts: IPost[] = ref([])
+const posts: Ref<IPost[]> = ref([])
 const confirmDlg = ref<InstanceType<typeof ConfirmDialog> | null>(null)
 const headers = [
   {
@@ -134,16 +134,20 @@ const headers = [
 ]
 const removePost = async (postId: number) => {
   if (
-    await confirmDlg.value.open('confirm', 'Do you want to delete this post?', {
-      width: 300,
-      color: 'info',
-    })
+    await confirmDlg.value!.open(
+      'confirm',
+      'Do you want to delete this post?',
+      {
+        width: 300,
+        color: 'info',
+      },
+    )
   ) {
     const loadingNotification = { msg: 'Post deleting', color: 'info' }
     try {
       commitAddNotification(store, loadingNotification)
       const token = readToken(store)
-      const res = await postApi.removePost(token, postId)
+      await postApi.removePost(token, postId)
       posts.value = [...posts.value.filter((e) => e.id != postId)]
       commitRemoveNotification(store, loadingNotification)
       commitAddNotification(store, { msg: 'Post deleted', color: 'success' })

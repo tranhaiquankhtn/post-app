@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-card class="mx-auto" variant="outlined">
       <v-toolbar dark flat>
-        <template v-slot:prepend>
+        <template #prepend>
           <v-card-title primary-text class="text-info"
             >Edit Profile</v-card-title
           >
@@ -19,15 +19,15 @@
           @submit.prevent
         >
           <v-text-field
-            label="Full Name"
             v-model="fullName"
+            label="Full Name"
             :rules="nameRules"
             required
           ></v-text-field>
           <v-text-field
+            v-model="email"
             label="E-mail"
             type="email"
-            v-model="email"
             :rules="emailRules"
             required
           ></v-text-field>
@@ -36,13 +36,13 @@
       <v-card-actions>
         <v-spacer />
         <v-btn @click="$router.back()">Cancel</v-btn>
-        <v-btn @click="reset" color="error" variant="tonal">Reset</v-btn>
+        <v-btn color="error" variant="tonal" @click="reset">Reset</v-btn>
         <v-btn
-          @click="submit"
           type="submit"
           color="info"
           variant="flat"
           :disabled="!valid"
+          @click="submit"
           >Submit</v-btn
         >
       </v-card-actions>
@@ -65,20 +65,23 @@ export default defineComponent({
       fullName: ref(''),
       email: ref(''),
       nameRules: [
-        (v) => !!v || 'Name is required',
-        (v) => (v && v.length > 2) || 'Name must be at least 3 character',
+        (v: any) => !!v || 'Name is required',
+        (v: any) => (v && v.length > 2) || 'Name must be at least 3 character',
       ],
       emailRules: [
-        (v) => !!v || 'Email is required',
-        (v) =>
+        (v: any) => !!v || 'Email is required',
+        (v: any) =>
           (v && /^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(v)) ||
           'Must be a valid email',
       ],
     }
   },
+  created() {
+    this.reloadProfile()
+  },
   methods: {
     async submit() {
-      const v = await this.$refs.form.validate()
+      const v = await (this.$refs.form as any).validate()
       if (v.valid) {
         const updatedProfile: IUserProfileUpdate = {
           email: this.email,
@@ -98,11 +101,8 @@ export default defineComponent({
     },
     reset() {
       this.reloadProfile()
-      this.$refs.form.resetValidation()
+      (this.$refs.form as any).resetValidation()
     },
-  },
-  created() {
-    this.reloadProfile()
   },
 })
 </script>

@@ -87,12 +87,6 @@ const routes: RouteRecordRaw[] = [
           },
         ],
       },
-      {
-        path: '/main/home',
-        name: 'Home',
-        component: () =>
-          import(/* webpackChunkName: "home" */ '@/views/HomeView.vue'),
-      },
     ],
   },
   {

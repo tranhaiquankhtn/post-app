@@ -137,7 +137,6 @@ export const actions = {
       }
 
       if (!token) {
-        console.log('token not found. Remove logIn info')
         await dispatchRemoveLogIn(context)
         return
       }

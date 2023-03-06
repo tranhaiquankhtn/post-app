@@ -18,6 +18,6 @@ export interface IUserProfileUpdate {
   email?: string
   full_name?: string
   password?: string
-  is_active?: string
-  is_superuser?: string
+  is_active?: boolean
+  is_superuser?: boolean
 }

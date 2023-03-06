@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-card variant="outlined">
       <v-toolbar dark>
-        <template v-slot:prepend>
+        <template #prepend>
           <v-card-title primary-title class="text-info"
             >Create User</v-card-title
           >
@@ -17,15 +17,15 @@
           @submit.prevent
         >
           <v-text-field
-            label="Full Name"
             v-model="fullName"
+            label="Full Name"
             :rules="nameRules"
             required
           />
           <v-text-field
+            v-model="email"
             label="E-mail"
             type="email"
-            v-model="email"
             :rules="emailRules"
             required
           />
@@ -35,23 +35,23 @@
               (currently is {{ isSuperUser ? '' : 'not ' }}a superuser)</span
             >
           </div>
-          <v-checkbox label="Is SuperUser" v-model="isSuperUser" color="info"/>
+          <v-checkbox v-model="isSuperUser" label="Is SuperUser" color="info" />
 
           <div class="subheading">User is active</div>
-          <v-checkbox label="Is active" v-model="isActive" color="info"/>
+          <v-checkbox v-model="isActive" label="Is active" color="info" />
 
           <!-- password -->
           <v-text-field
+            v-model="password"
             label="Password"
             type="password"
-            v-model="password"
             :rules="passwordRules"
             required
           ></v-text-field>
           <v-text-field
+            v-model="confirmed_password"
             label="Confirm Password"
             type="password"
-            v-model="confirmed_password"
             :rules="passwordConfirmedRules"
             required
           ></v-text-field>
@@ -60,13 +60,13 @@
       <v-card-actions>
         <v-spacer />
         <v-btn @click="$router.back()">Cancel</v-btn>
-        <v-btn @click="reset" color="error" variant="tonal">Reset</v-btn>
+        <v-btn color="error" variant="tonal" @click="reset">Reset</v-btn>
         <v-btn
-          @click="submit"
           type="submit"
           color="info"
           variant="flat"
           :disabled="!valid"
+          @click="submit"
           >Save</v-btn
         >
       </v-card-actions>
@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { ref, type Ref, defineComponent } from 'vue'
+import { ref, defineComponent } from 'vue'
 
 import { store } from '@/store'
 import { dispatchCreateUser } from '@/store/admin/actions'
@@ -86,20 +86,20 @@ export default defineComponent({
   setup() {
     const password = ref('')
     const passwordRules = [
-      (v) => !!v || 'Password is required',
-      (v) => (v && v.length > 6) || 'Name must be at least 6 character',
+      (v: any) => !!v || 'Password is required',
+      (v: any) => (v && v.length > 6) || 'Name must be at least 6 character',
     ]
     return {
       valid: ref(true),
       fullName: ref(''),
       nameRules: [
-        (v) => !!v || 'Name is required',
-        (v) => (v && v.length > 2) || 'Name must be at least 3 character',
+        (v: any) => !!v || 'Name is required',
+        (v: any) => (v && v.length > 2) || 'Name must be at least 3 character',
       ],
       email: ref(''),
       emailRules: [
-        (v) => !!v || 'Email is required',
-        (v) =>
+        (v: any) => !!v || 'Email is required',
+        (v: any) =>
           (v && /^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(v)) ||
           'Must be a valid email',
       ],
@@ -110,7 +110,7 @@ export default defineComponent({
       confirmed_password: ref(''),
       passwordConfirmedRules: [
         ...passwordRules,
-        (v) =>
+        (v: any) =>
           (v && v === password.value) ||
           'Password and Confirmed Password are not matched',
       ],
@@ -119,26 +119,24 @@ export default defineComponent({
 
   methods: {
     async submit() {
-      const v = await this.$refs.form.validate()
+      const v = await (this.$refs.form as any).validate()
       if (!v.valid) {
-        console.log('v=', v)
         return
       }
       const user: IUserProfileCreate = {
-        fullName: this.fullName,
+        full_name: this.fullName,
         email: this.email,
-        isActive: this.isActive,
-        isSuperUser: this.isSuperUser,
+        is_active: this.isActive,
+        is_superuser: this.isSuperUser,
         password: this.password,
       }
-      console.log('user=', user)
       await dispatchCreateUser(store, user)
       this.$router.push('/main/admin/users/all')
     },
     async reset() {
       this.password = ''
       this.confirmed_password = ''
-      this.$refs.form.resetValidation()
+      (this.$refs.form as any).resetValidation()
     },
   },
 })
