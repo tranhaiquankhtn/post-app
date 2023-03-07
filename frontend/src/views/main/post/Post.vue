@@ -45,8 +45,8 @@
               <tr v-for="post in posts" :key="post.id">
                 <td>{{ post.title }}</td>
                 <td>{{ post.content }}</td>
-                <td>{{ post.created }}</td>
-                <td>{{ post.modified }}</td>
+                <td>{{ $filters.formatDate(post.created) }}</td>
+                <td>{{ $filters.formatDate(post.modified) }}</td>
                 <td>
                   <v-tooltip text="Edit Post">
                     <template #activator="{ props }">

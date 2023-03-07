@@ -43,7 +43,7 @@
                 </div>
                 <v-spacer></v-spacer>
                 <div class="caption text-sm-right">
-                  <router-link to="/recover-password">
+                  <router-link to="/forgot-password">
                     Forgot your Password?
                   </router-link>
                 </div>

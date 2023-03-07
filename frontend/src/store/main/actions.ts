@@ -40,7 +40,7 @@ export const actions = {
       commitSetLogIn(context, true)
       commitSetLogInError(context, false)
 
-      await dispatchGetUserProfile(context, token)
+      await dispatchGetUserProfile(context, context.state.token)
       await dispatchRouteLogIn(context)
       commitAddNotification(context, {
         msg: `Welcome ${payload.username}`,
@@ -56,16 +56,16 @@ export const actions = {
       })
     }
   },
-  async actionRemoveLogIn(context: AppState) {
+  async actionRemoveLogIn(context: AppContext) {
     commitSetToken(context, '')
     removeLocalToken()
     commitSetLogIn(context, false)
   },
-  async actionLogOut(context: AppState) {
+  async actionLogOut(context: AppContext) {
     await dispatchRemoveLogIn(context)
     await dispatchRouteLogOut(context)
   },
-  async actionGetUserProfile(context: AppState, token: string) {
+  async actionGetUserProfile(context: AppContext, token: string) {
     try {
       const res = await userApi.getSelf(token)
       const profile = res.data
@@ -160,6 +160,50 @@ export const actions = {
       }, payload.timeout)
     })
   },
+  async actionRecoverPassword(context: AppContext, payload: { email: string }) {
+    const loadingNotification: AppNotification = {
+      msg: 'Sending password recover email',
+      color: 'info',
+      showProgress: true,
+    }
+    try {
+      commitAddNotification(context, loadingNotification)
+      await Promise.all([
+        authApi.recoverPassword(payload.email),
+        new Promise((resolve, _) => setTimeout(resolve, 500)),
+      ])
+      commitAddNotification(context, {
+        msg: 'Recovery email sent',
+        color: 'success',
+      })
+      dispatchLogOut(context)
+    } catch (e) {
+      commitRemoveNotification(context, loadingNotification)
+      commitAddNotification(context, { msg: 'Incorrect email', color: 'error' })
+    }
+  },
+  async actionResetPassword(context: AppContext, payload:{ token: string, password: string }) {
+    const loadingNotification: AppNotification = {
+      msg: 'Resetting Password',
+      color: 'info',
+      showProgress: true,
+    }
+    try {
+      commitAddNotification(context, loadingNotification)
+      await Promise.all([
+        authApi.resetPassword(payload.token, payload.password),
+        new Promise((resolve, _) => setTimeout(resolve, 500)),
+      ])
+      commitAddNotification(context, {
+        msg: 'Recovery email sent',
+        color: 'success',
+      })
+      dispatchLogOut(context)
+    } catch (e) {
+      commitRemoveNotification(context, loadingNotification)
+      commitAddNotification(context, { msg: 'Incorrect email', color: 'error' })
+    }
+  }
 }
 
 const { dispatch } = getStoreAccessors<AppState | any, State>('')
@@ -177,3 +221,5 @@ export const dispatchCheckLoggedIn = dispatch(actions.actionCheckLoggedIn)
 export const dispatchRemoveNotification = dispatch(
   actions.actionRemoveNotification,
 )
+export const dispatchResetPassword = dispatch(actions.actionResetPassword)
+export const dispatchRecoverPassword = dispatch(actions.actionRecoverPassword)

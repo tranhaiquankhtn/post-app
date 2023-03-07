@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from environs import Env
 from pydantic import BaseSettings, EmailStr, PostgresDsn, validator
@@ -21,6 +21,9 @@ class Settings(BaseSettings):
         # parse_obj_as(AnyHttpUrl, "http://localhost"),,
         # parse_obj_as(AnyHttpUrl, "http://localhost:8080"),
     ]
+
+    SERVER_NAME: str = "localhost"
+    SERVER_HOST: str = "http://localhost"
 
     POSTGRES_SERVER: str
     POSTGRES_PORT: str
@@ -50,6 +53,33 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     HASH_ALG: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+
+    # Email Configuration
+    SMTP_TLS: bool = True
+    SMTP_PORT: Optional[int] = None
+    SMTP_HOST: Optional[str] = None
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    FROM_EMAIL: Optional[EmailStr] = None
+    FROM_NAME: Optional[str] = None
+
+    @validator("FROM_NAME")
+    def get_email_title(cls, v: Optional[str], values: Dict[str, Any]) -> str:
+        if not v:
+            return values["PROJECT_NAME"]
+        return v
+
+    EMAILS_ENABLED: bool = True
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    EMAIL_TEMPLATES_DIR: str = "app/email-templates/build"
+
+    @validator("EMAILS_ENABLED", pre=True)
+    def get_emails_enabled(cls, v: bool, values: Dict[str, Any]) -> bool:
+        return bool(
+            values.get("SMTP_HOST")
+            and values.get("SMTP_PORT")  # noqa: #W503
+            and values.get("FROM_EMAIL")  # noqa: W503
+        )
 
     class Config:
         case_sensitive = True

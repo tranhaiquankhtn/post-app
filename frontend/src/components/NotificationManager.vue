@@ -55,7 +55,7 @@ const setNotification = async (notification: AppNotification | false) => {
   }
   if (notification) {
     currentNotification.value = notification
-    showProgress.value = notification?.showProgress
+    showProgress.value = notification.showProgress
     show.value = true
   } else {
     currentNotification.value = false
