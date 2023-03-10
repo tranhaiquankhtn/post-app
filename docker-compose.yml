@@ -1,5 +1,62 @@
 version: "3.3"
 services:
+  proxy:
+    image: traefik:${TRAEFIK_TAG?Variable not set}
+    ports:
+      - "8080:8080"
+      - "80:80"
+      - "443:443"
+    networks:
+      - ${TRAEFIK_PUBLIC_NETWORK?Variable not set}
+      - default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./certificates:/certificates
+    command:
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+      - --accesslog
+      - --log
+      - --log.level=DEBUG
+      - --api
+      - --api.insecure=true
+      - --api.dashboard=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.email=thaiquankhtn89@gmail.com
+      - --certificatesresolvers.le.acme.storage=/certificates/acme.json
+      - --certificatesresolvers.le.acme.httpchallenge=true
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      # for staging
+      # - --certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+      # for production
+      # - --certificatesresolvers.le.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK?Variable not set}
+      # Use the custom label "traefik.constraint-label=traefik-public"
+      # This public Traefik will only use services with this label
+      - traefik.constraint-label=${TRAEFIK_PUBLIC_TAG?Variable not set}
+      - traefik.http.middlewares.${STACK_NAME?Variable not set}-https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.${STACK_NAME?Variable not set}-https-redirect.redirectscheme.permanent=true
+      - traefik.http.routers.${STACK_NAME?Variable not set}-proxy-http.rule=Host(`${DOMAIN?Variable
+        not set}`) || Host(`www.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.${STACK_NAME?Variable not set}-proxy-http.entrypoints=http
+      - traefik.http.routers.${STACK_NAME?Variable not set}-proxy-https.rule=Host(`${DOMAIN?Variable
+        not set}`) || Host(`www.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.${STACK_NAME?Variable not set}-proxy-https.entrypoints=https
+      - traefik.http.routers.${STACK_NAME?Variable not set}-proxy-https.tls=true
+      - traefik.http.routers.${STACK_NAME?Variable not set}-proxy-https.tls.certresolver=le
+      - traefik.http.services.${STACK_NAME?Variable not set}-proxy.loadbalancer.server.port=80
+      - traefik.http.middlewares.${STACK_NAME?Variable not set}-www-redirect.redirectregex.regex=^https?://(www.)?(${DOMAIN?Variable
+        not set})/(.*)
+      - traefik.http.middlewares.${STACK_NAME?Variable not set}-www-redirect.redirectregex.replacement=https://${DOMAIN?Variable
+        not set}/$${3}
+      - traefik.http.routers.${STACK_NAME?Variable not set}-proxy-https.middlewares=${STACK_NAME?Variable
+        not set}-www-redirect
+      - traefik.http.routers.${STACK_NAME?Variable not set}-proxy-http.middlewares=${STACK_NAME?Variable
+        not set}-www-redirect,${STACK_NAME?Variable not set}-https-redirect
   db:
     image: postgres:15.1
     ports:
@@ -10,5 +67,39 @@ services:
       - .env
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
+  backend:
+    image: "${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-false}
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label-stack=${TRAEFIK_TAG?Variable not set}
+      - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.rule=PathPrefix(`/api`)
+        || PathPrefix(`/docs`) || PathPrefix(`/redoc`)
+      - traefik.http.services.${STACK_NAME?Variable not set}-backend.loadbalancer.server.port=80
+  frontend:
+    image: "${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}"
+    depends_on:
+      - backend
+    build:
+      context: ./frontend
+      args:
+        FRONTEND_ENV: ${FRONTEND_ENV-production}
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label-stack=${TRAEFIK_TAG?Variable not set}
+      - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-http.rule=PathPrefix(`/`)
+      - traefik.http.services.${STACK_NAME?Variable not set}-frontend.loadbalancer.server.port=80
+      - traefik.http.routers.${STACK_NAME?Variable not set}-frontend.entrypoints=websecure
 volumes:
   app-db-data:
+networks:
+  traefik-public:
+    external: true

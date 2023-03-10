@@ -1,4 +1,6 @@
+import logging
 import logging.config
+import os
 
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
@@ -8,9 +10,6 @@ from app.core.config import settings
 from app.db.init_db import init_db
 from app.db.session import SessionLocal
 from app.logger import config_logging
-
-logging.config.dictConfig(config=config_logging("logs/app.log"))
-logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1}/openapi.json"
@@ -28,9 +27,19 @@ if settings.BACKEND_CORS_ORIGINS:
 app.include_router(api_router, prefix=settings.API_V1)
 
 
+def init_logging() -> None:
+    if not os.path.exists(settings.LOG_DIR):
+        os.mkdir(settings.LOG_DIR)
+
+    logging.config.dictConfig(
+        config=config_logging(os.path.join(settings.LOG_DIR, "app.log"))
+    )
+
+
 @app.on_event("startup")
 def on_startup() -> None:
-    logger.info("on_startup()")
+    logging.info("on_startup()")
+    init_logging()
     db = SessionLocal()
     init_db(db)
-    logger.info("init done")
+    logging.info("init done")

@@ -1,23 +1,18 @@
 from typing import Any, Dict, List, Optional
 
-from environs import Env
 from pydantic import BaseSettings, EmailStr, PostgresDsn, validator
-
-env = Env()
-
-if env.bool("DEBUG", True):
-    print("Loading dev environment")
-    env.read_env(".env")
 
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Blog App"
     API_V1: str = "/api/v1"
-    LOG_FILE = env.str("LOG_FILE", "logs/app.log")
+    LOG_DIR: str = "logs"
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost",
         "http://localhost:8080",
         "http://localhost:5173",
+        "http://staging.thaiquan.dev",
+        "https://portfolio.thaiquan.dev"
         # parse_obj_as(AnyHttpUrl, "http://localhost"),,
         # parse_obj_as(AnyHttpUrl, "http://localhost:8080"),
     ]
