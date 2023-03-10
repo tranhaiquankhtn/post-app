@@ -51,12 +51,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, type Ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { IUserProfileUpdate } from '@/types/profile'
 import { readUserProfile } from '@/store/main/getters'
 import { dispatchUpdateUserProfile } from '@/store/main/actions'
-
-import { readFirstNotification } from '@/store/main/getters'
 
 export default defineComponent({
   setup() {
@@ -79,6 +77,7 @@ export default defineComponent({
   created() {
     this.reloadProfile()
   },
+
   methods: {
     async submit() {
       const v = await (this.$refs.form as any).validate()
@@ -101,7 +100,7 @@ export default defineComponent({
     },
     reset() {
       this.reloadProfile()
-      (this.$refs.form as any).resetValidation()
+      this.$refs.form.resetValidation()
     },
   },
 })

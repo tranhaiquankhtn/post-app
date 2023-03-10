@@ -182,7 +182,10 @@ export const actions = {
       commitAddNotification(context, { msg: 'Incorrect email', color: 'error' })
     }
   },
-  async actionResetPassword(context: AppContext, payload:{ token: string, password: string }) {
+  async actionResetPassword(
+    context: AppContext,
+    payload: { token: string; password: string },
+  ) {
     const loadingNotification: AppNotification = {
       msg: 'Resetting Password',
       color: 'info',
@@ -203,7 +206,7 @@ export const actions = {
       commitRemoveNotification(context, loadingNotification)
       commitAddNotification(context, { msg: 'Incorrect email', color: 'error' })
     }
-  }
+  },
 }
 
 const { dispatch } = getStoreAccessors<AppState | any, State>('')

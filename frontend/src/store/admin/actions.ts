@@ -77,7 +77,7 @@ export const actions = {
         color: 'success',
       })
     } catch (e) {
-      await dispatchHandleApiError(e)
+      await dispatchHandleApiError(context, e)
     }
   },
 }

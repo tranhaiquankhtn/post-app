@@ -11,15 +11,13 @@ COPY ./ /app/
 
 ARG FRONTEND_ENV=production
 
-ENV VITE_APP_ENV=${FRONTEND_ENV}
+ENV NODE_ENV=${FRONTEND_ENV}
 
 RUN npm run build
 
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
 FROM nginx:1.15
-
-# RUN apt update -y &&  apt-get install -y ca-certificates
 
 COPY --from=build-stage /app/dist/ /usr/share/nginx/html
 
