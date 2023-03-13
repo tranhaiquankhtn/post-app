@@ -21,4 +21,5 @@ RUN bash -c "poetry install --without dev --no-root"
 COPY ./app /app
 ENV PYTHONPATH=/app
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--proxy-headers"]
+ENTRYPOINT bash -c "/app/run.sh"
+# CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--proxy-headers"]
