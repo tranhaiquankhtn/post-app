@@ -12,9 +12,8 @@ class Settings(BaseSettings):
         "http://localhost:8080",
         "http://localhost:5173",
         "http://staging.thaiquan.dev",
-        "https://portfolio.thaiquan.dev"
-        # parse_obj_as(AnyHttpUrl, "http://localhost"),,
-        # parse_obj_as(AnyHttpUrl, "http://localhost:8080"),
+        "https://portfolio.thaiquan.dev",
+        "https://www.portfolio.thaiquan.dev",
     ]
 
     SERVER_NAME: str = "localhost"
