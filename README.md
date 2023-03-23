@@ -2,4 +2,6 @@
 Fullstack app to manage posts.
 
 # Demo
-https://portfolio.thaiquan.dev
+
+* site: https://portfolio.thaiquan.dev
+* login: tranhaiquan.khtn@gmail.com/admin01
